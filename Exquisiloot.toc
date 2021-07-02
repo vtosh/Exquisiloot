@@ -1,0 +1,14 @@
+## Interface: 20501
+## Title: Exquisiloot
+## Version: 0.1
+## Author: Vtosh-Skullflame
+## Notes: Loot and attendance tracking for the guild Exquisite-Skullflame
+## SavedVariables: ExquisilootDB
+
+Libs\embeds.xml
+Locale\enGB.lua
+
+Exquisiloot.lua
+Tooltips.lua
+Comm.lua
+ui.xml

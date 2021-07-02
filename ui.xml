@@ -1,0 +1,267 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="ui.lua" />
+	<Frame name="ExquisilootImportFrame" inherits="BackdropTemplate" hidden="true" parent="UIParent" toplevel="true" movable="true">
+		<Size x="400" y="300" />
+		<Anchors>
+			<Anchor point="CENTER" x="-74" y="0" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootImportFrameTitle" inherits="GameFontNormal" text="Import Tooltip Data">
+					<Size />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-25" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<ScrollFrame name="ExquisilootImportDataScroll" inherits="UIPanelScrollFrameTemplate" enableMouse="true">
+				<Size x="300" y="200" />
+				<Anchors>
+					<Anchor point="CENTER" x="0" y="0" />
+				</Anchors>
+				<ScrollChild>
+					<EditBox name="ExquisilootImportData" inherits="InputBoxScriptTemplate" multiLine="true" autoFocus="false">
+						<Size x="300" y="200" />
+						<Anchors>
+							<Anchor point="TOP" x="0" y="0" />
+						</Anchors>
+						<FontString inherits="ChatFontNormal">
+							<Color r="1" g="1" b="1" />
+							<Shadow>
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+								<Color r="0" g="0" b="0" />
+							</Shadow>
+						</FontString>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="ExquisilootImportButton" inherits="UIPanelButtonTemplate" text="Import">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" x="25" y="15" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExquisilootImport()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootCancelButton" inherits="UIPanelButtonTemplate" text="Cancel">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-25" y="15" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExquisilootImportExit(self)
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+	<Frame name="ExquisilootMainFrame" inherits="BackdropTemplate" hidden="true" toplevel="true">
+		<Size x="450" y="429" />
+		<Anchors>
+			<Anchor point="CENTER" x="0" y="0" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootRaidScrollTitle" inherits="GameFontNormal" text="Raids">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="TOPLEFT" x="100" y="-25" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootLootScrollTitle" inherits="GameFontNormal" text="Raid Loot">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="BOTTOM" x="0" y="170" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootAttendanceScrollTitle" inherits="GameFontNormal" text="Attendance">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="CENTER" relativePoint="TOPRIGHT" x="-100" y="-25" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="ExquisilootAddLootButton" inherits="UIPanelButtonTemplate" text="Add">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" x="15" y="15" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:showAddItem()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootDeleteLootButton" inherits="UIPanelButtonTemplate" text="Delete">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-15" y="15" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:deleteLoot(ExquisilootRaidScroll:GetSelection(), ExquisilootLootScroll:GetSelection())
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootModifyLootButton" inherits="UIPanelButtonTemplate" text="Modify">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOM" x="0" y="15" />
+				</Anchors>
+			</Button>
+			<Button name="ExquisilootDeleteRaidButton" inherits="UIPanelButtonTemplate" text="Delete">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="ExquisilootRaidScrollTitle" relativePoint="BOTTOMRIGHT" x="5" y="-190" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:deleteRaid(ExquisilootRaidScroll:GetSelection())
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootDeleteAttendanceButton" inherits="UIPanelButtonTemplate" text="Delete">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="ExquisilootAttendanceScrollTitle" relativePoint="BOTTOMRIGHT" x="5" y="-190" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:deleteAttendance(ExquisilootRaidScroll:GetSelection(), ExquisilootAttendanceScroll:GetSelection())
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootShowImportButton" inherits="UIPanelButtonTemplate" text="Import">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOP" x="0" y="-75" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						if ExquisilootImportFrame:IsShown() then ExquisilootImportFrame:Hide() else ExquisilootImportFrame:Show() end
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				ExquisilootMainFrame_OnLoad()
+			</OnLoad>
+			<OnShow>
+				Exquisiloot:updateRaidFrame()
+			</OnShow>
+		</Scripts>
+	</Frame>
+	<Frame name="ExquisilootAddItemFrame" inherits="BackdropTemplate" hidden="true" movable="true">
+		<Size x="300" y="200" />
+		<Anchors>
+			<Anchor point="TOPLEFT" x="35" y="-26" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootAddItemTitle" inherits="GameFontNormal" text="Add Item">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-25" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootAddItemItemTitle" inherits="GameFontNormal" text="Item:">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-50" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootAddItemPlayerTitle" inherits="GameFontNormal" text="Player:">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-75" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<EditBox name="ExquisilootAddItemName" inherits="InputBoxTemplate">
+				<Size x="160" y="32" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="ExquisilootAddItemItemTitle" relativePoint="RIGHT" x="5" />
+				</Anchors>
+			</EditBox>
+			<EditBox name="ExquisilootAddItemPlayer" inherits="UIDropDownMenuTemplate">
+				<Size x="160" y="32" />
+				<Anchors>
+					<Anchor point="LEFT" relativeTo="ExquisilootAddItemPlayerTitle" relativePoint="RIGHT" x="5" y="0" />
+				</Anchors>
+				<Scripts>
+					<OnLoad inherit="prepend">
+						UIDropDownMenu_Initialize(ExquisilootAddItemPlayer, ExquisilootPlayerDropdown)
+					</OnLoad>
+				</Scripts>
+			</EditBox>
+			<Button name="ExquisilootAddItemAddButton" inherits="UIPanelButtonTemplate" text="Add">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="ExquisilootAddItemFrame" relativePoint="BOTTOM" x="0" y="25" />
+				</Anchors>
+			</Button>
+			<Button name="ExquisilootAddItemCancelButton" inherits="UIPanelButtonTemplate" text="Cancel">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="ExquisilootAddItemFrame" relativePoint="BOTTOM" x="0" y="25" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExquisilootAddItemFrame:Hide()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad>
+				self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+</Ui>

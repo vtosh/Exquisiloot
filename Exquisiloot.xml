@@ -1,0 +1,49 @@
+<Ui xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://www.blizzard.com/wow/ui/">
+	<Script file="Exquisiloot.lua" />
+	<Frame name="ImportFrame" inherits="BackdropTemplate">
+		<Size x="406" y="300" />
+		<Anchors>
+			<Anchor point="TOPLEFT" x="218" y="-248" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ImportTitle" inherits="GameFontNormal" text="Import">
+					<Size x="101" y="32" />
+					<Anchors>
+						<Anchor point="TOP" relativeTo="ImportFrame" y="-15" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<ScrollFrame name="ImportData" inherits="UIPanelScrollFrameTemplate" parent="UIParent">
+				<Size x="300" y="200" />
+				<Anchors>
+					<Anchor point="CENTER" relativeTo="ImportFrame" />
+				</Anchors>
+			</ScrollFrame>
+			<Button name="Import" inherits="UIPanelButtonTemplate" text="Import">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="ImportFrame" x="50" y="15" />
+				</Anchors>
+			</Button>
+			<Button name="Cancel" inherits="UIPanelButtonTemplate" text="Cancel">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="ImportFrame" x="-50" y="15" />
+				</Anchors>
+			</Button>
+		</Frames>
+	</Frame>
+</Ui>
