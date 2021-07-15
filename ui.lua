@@ -62,7 +62,7 @@ local ExquisilootLootTableColDef = {
 	{["name"] = "", ["width"] = 1}, -- Hidden Loot ID
     {["name"] = "Icon", ["width"] = 30},
     {["name"] = "Item", ["width"] = 145},
-    {["name"] = "Recieved", ["width"] = 92},
+    {["name"] = "received", ["width"] = 92},
     {["name"] = "Note", ["width"] = 110},
 };
 

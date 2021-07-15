@@ -46,16 +46,16 @@ function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
 	self:debug("source: [%s]", source)
 	self:debug("player: [%s]", self.player)
 	if (source ~= self.player) then
-		local recieved = Exquisiloot:decompressFromSend(text)
-		if (recieved == nil or recieved["type"] == nil) then
-			self:debug("Invalid message recieved")
-		elseif (recieved["type"] == "tooltipData") then
-			self:debug("Recieved tooltipdata")
+		local received = Exquisiloot:decompressFromSend(text)
+		if (received == nil or received["type"] == nil) then
+			self:debug("Invalid message received")
+		elseif (received["type"] == "tooltipData") then
+			self:debug("received tooltipdata")
 			-- TODO: Verify it came from trusted source
-			self:updateTooltipData(recieved["data"], recieved["update"])
+			self:updateTooltipData(received["data"], received["update"])
 			
-		elseif (recieved["type"] == "getTooltipData") then
-			self:debug("Recieved tooltipData request")
+		elseif (received["type"] == "getTooltipData") then
+			self:debug("received tooltipData request")
 			self:sendTooltipData(self.db.profile.tooltipData)
 		end
 	else
