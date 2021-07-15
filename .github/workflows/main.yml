@@ -33,5 +33,5 @@ jobs:
         with:
           args: -g bcc
         env:
-          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_OAUTH: ${{ secrets.GH_TOKEN }}
           
