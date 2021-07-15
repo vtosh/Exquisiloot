@@ -31,7 +31,7 @@ local function OnTooltipSetItem(frame, ...)
             if (a[2] == b[2]) then
                 return a[1] > b[1]
             end
-            return a[2] <  b[2] 
+            return a[2] > b[2] 
         end)
 		for _, info in ipairs(sorted) do
 			-- If we are in an active raid, limit to only the people in the raid group
