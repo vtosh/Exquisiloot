@@ -26,10 +26,6 @@ externals:
   Libs/LibCompress:
     url: https://repos.wowace.com/wow/libcompress/trunk
 
-manual-changelog:
-  filename: CHANGELOG.md
-  markup-type: markdown
-
 ignore:
     - Exquisiloot.wowproj
 
