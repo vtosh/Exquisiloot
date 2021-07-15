@@ -1,6 +1,6 @@
 ## Interface: 20501
 ## Title: Exquisiloot
-## Version: 0.2
+## Version: 0.3
 ## Author: Vtosh-Skullflame
 ## Notes: Loot and attendance tracking for the guild Exquisite-Skullflame
 ## SavedVariables: ExquisilootDB
