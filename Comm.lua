@@ -3,7 +3,7 @@ local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(name)
 
 local commLootPrefix = Exquisiloot.commPrefix
 
-function Exquisiloot:compressToSend(data)
+function Exquisiloot:sendComm(data)
 	local message = self.libc:Compress(self.libs:Serialize(data))
 	return self.libce:Encode(message)
 end
@@ -29,12 +29,12 @@ end
 function Exquisiloot:sendTooltipData(tooltipData, diff)
 	-- TODO: Only send out if we are a trusted source
 	--if (self:verifyTrusted(UnitName("player"))) then
-		self:SendCommMessage(commLootPrefix, self:compressToSend({type="tooltipData", update=diff, data=tooltipData}), "GUILD")
+		self:SendCommMessage(commLootPrefix, self:sendComm({type="tooltipData", update=diff, data=tooltipData}), "GUILD")
 	--end
 end
 
 function Exquisiloot:getTooltipData()
-	self:SendCommMessage(commLootPrefix, self:compressToSend({type="getTooltipData"}), "GUILD")
+	self:SendCommMessage(commLootPrefix, self:sendComm({type="getTooltipData"}), "GUILD")
 end
 
 
