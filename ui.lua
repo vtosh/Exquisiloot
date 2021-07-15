@@ -34,10 +34,6 @@ function ExquisilootImport()
 
 	Exquisiloot:sendTooltipData(tooltipData, false)
 	Exquisiloot:updateTooltipData(tooltipData, false)
-	--Exquisiloot:SendCommMessage("ExqiLootPrio", Exquisiloot:compressToSend({type="tooltipData", data=tooltipData}), "GUILD")
-	--Exquisiloot:SendCommMessage("ExqiLootPrio", Exquisiloot:compressToSend({type="tooltipData", data="HELLO"}), "GUILD")
-
-	--Exquisiloot.db.profile.tooltipData = tooltipData
 
 	-- Clear out old text
 	ExquisilootImportData:SetText("")

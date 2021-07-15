@@ -8,9 +8,8 @@
 Libs\embeds.xml
 Locale\enGB.lua
 
-init.lua
+Exquisiloot.lua
 comm.lua
 options.lua
-Exquisiloot.lua
 Tooltips.lua
 ui.xml

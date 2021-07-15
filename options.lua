@@ -13,7 +13,6 @@ local function getGuildRanks()
 	return trustedRank
 end
 
-local trustedRank = {}
 local options = {
     name = "Exquisiloot",
     handler = Exquisiloot,

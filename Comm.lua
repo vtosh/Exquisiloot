@@ -41,7 +41,6 @@ end
 function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
 	self:debug("OnCommReceived")
 	self:debug("prefix: [%s]", prefix)
-	--self:debug("text: [%s]", text)
 	self:debug("distribution: [%s]", distribution)
 	self:debug("source: [%s]", source)
 	self:debug("player: [%s]", self.player)

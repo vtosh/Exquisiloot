@@ -20,13 +20,6 @@ local function OnTooltipSetItem(frame, ...)
 	local name, link = frame:GetItem()
 	if (Exquisiloot.db.profile.tooltipData[name] ~= nil) then
 		local sorted = Exquisiloot.db.profile.tooltipData[name]
-		--for player, value in pairs(Exquisiloot.db.profile.tooltipData[name]) do
-		--	--frame:AddLine(format("%s: %d", player, value))
-		--	if (Exquisiloot.raidMembers == nil or Exquisiloot.raidMembers[player] ~= nil) then
-		--		table.insert(sorted, {player, value})
-		--	end
-		--end
-		--table.sort(sorted, function(a,b) return a[2] > b[2] end)
 		table.sort(sorted, function(a,b) 
             if (a[2] == b[2]) then
                 return a[1] > b[1]
@@ -40,8 +33,6 @@ local function OnTooltipSetItem(frame, ...)
 			end
 		end
 	end
-
-	--if tooltipscripts_original[frame] then return tooltipscripts_original[frame](frame, ...) end
 end
 
 for _, obj in pairs({GameTooltip, ItemRefTooltip}) do
