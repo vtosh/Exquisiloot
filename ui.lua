@@ -19,16 +19,25 @@ function Exquisiloot:toggleUI()
 	end
 end
 
-
 function ExquisilootImport()
-	-- Sanitize the data from the excel spreadsheet. Add a the opening/closing brackets and remove the trailing comma
+	-- Parse data from Excel import
 	local importData = ExquisilootImportData:GetText()
-	importData = string.gsub(importData, ",%s+$", "")
-	importData = format("{%s}", importData)
-	
-	-- Import my tool tip data
-	local parse = LibStub("LibParse")
-	Exquisiloot.db.profile.tooltipData = parse:JSONDecode(importData)
+	local tooltipData = {}
+	for line in string.gmatch(importData, '[^\r\n]+') do
+		item, chars = string.match(line, "(.+):%s+{(.+)}")
+		tooltipData[item] = {}
+		for char, points in string.gmatch(chars, '"(%S+)": (%S+),') do
+			table.insert(tooltipData[item], {char, points})
+			--print(format("char: %s, points: %d", char, points))
+		end
+	end
+
+	Exquisiloot:sendTooltipData(tooltipData, false)
+	Exquisiloot:updateTooltipData(tooltipData, false)
+	--Exquisiloot:SendCommMessage("ExqiLootPrio", Exquisiloot:compressToSend({type="tooltipData", data=tooltipData}), "GUILD")
+	--Exquisiloot:SendCommMessage("ExqiLootPrio", Exquisiloot:compressToSend({type="tooltipData", data="HELLO"}), "GUILD")
+
+	--Exquisiloot.db.profile.tooltipData = tooltipData
 
 	-- Clear out old text
 	ExquisilootImportData:SetText("")
