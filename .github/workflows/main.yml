@@ -32,4 +32,6 @@ jobs:
         uses: BigWigsMods/packager@v1
         with:
           args: -g bcc
+        env:
+          GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
           
