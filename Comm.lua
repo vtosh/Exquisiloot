@@ -11,13 +11,15 @@ local function OnPingReceived(received, source)
 
     if (newTooltipData > 0) then
         -- Logged in player has newer tooltipData
+        Exquisiloot:debug("Logged in player has newer tooltipData")
         if (Exquisiloot:validateTrust(source)) then
 	        -- request their tooltipdata
         end
     elseif (newTooltipData < 0) then
         -- Logged in player has older tooldtipData
+        Exquisiloot:debug("Logged in player has older tooltipData")
         -- Tell them we have a newer tooltipData set
-        Exquisiloot:sendWhisper({type="pong", tooltipDataLastUpdated=Exquisiloot.db.profile.tooltipDataLastUpdated})
+        Exquisiloot:sendWhisper({type="pong", tooltipDataLastUpdated=Exquisiloot.db.profile.tooltipDataLastUpdated}, source)
     end
 end
 
@@ -27,7 +29,7 @@ end
 
 local target
 local function OnGetTooltipDataReceived(received, distribution, source)
-    self:debug("received getTooltipData request")
+    Exquisiloot:debug("received getTooltipData request")
     -- Don't just blindly send to "guild" channel lets think about this
     if distribution == "WHISPER" then 
         target = source
@@ -38,9 +40,9 @@ local function OnGetTooltipDataReceived(received, distribution, source)
 end
 
 local function OnTooltipDataReceived(received, source)
-	self:debug("received tooltipdata")
+	Exquisiloot:debug("received tooltipdata")
     if (Exquisiloot:validateTrust(source)) then
-	    self:updateTooltipData(received["data"], received["diff"], received["timestamp"])
+	    Exquisiloot:updateTooltipData(received["data"], received["diff"], received["timestamp"])
     end
 end
 
@@ -68,7 +70,7 @@ function Exquisiloot:configureComm()
                 break
             end
         end
-    end, 3.0)
+    end, 10.0)
 end
 
 function Exquisiloot:cleardownComm()
@@ -108,11 +110,11 @@ end
 
 function Exquisiloot:sendTooltipData(tooltipData, diff, target)
     if (target ~= nil) then
-        self:sendWhisper({type="tooltipData", data=self.db.profile.TooltipData, 
-                diff=diff, timestamp=self.db.profile.TooltipDataLastUpdated}, target)
+        self:sendWhisper({type="tooltipData", data=Exquisiloot.db.profile.tooltipData, 
+                diff=diff, timestamp=self.db.profile.tooltipDataLastUpdated}, target)
     else
-        self:sendGuild({type="tooltipData", data=Exquisiloot.db.profile.TooltipData, 
-            diff=diff, timestamp=Exquisiloot.db.profile.TooltipDataLastUpdated})
+        self:sendGuild({type="tooltipData", data=Exquisiloot.db.profile.tooltipData, 
+            diff=diff, timestamp=Exquisiloot.db.profile.tooltipDataLastUpdated})
     end
 end
 

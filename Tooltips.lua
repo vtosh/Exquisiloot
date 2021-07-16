@@ -2,6 +2,11 @@ local name, Exquisiloot = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(name)
 
 function Exquisiloot:updateTooltipData(tooltipData, diff, timestamp)
+    if (tooltipData == nil) then
+        -- Lets protect people if somehow tooltip data is nil
+        return 
+    end
+
     if (timestamp == nil) then
         timestamp = C_DateAndTime.GetCurrentCalendarTime()
     end
