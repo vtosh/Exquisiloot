@@ -5,40 +5,6 @@ local version = GetAddOnMetadata(name, "Version")
 local commPrefix = "ExqiLootPrio"
 local pingResponses
 
-
-local received
-function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
-	self:debug("OnCommReceived")
-	--self:debug("prefix: [%s]", prefix)
-	self:debug("source: [%s]", source)
-	self:debug("distribution: [%s]", distribution)
-	--self:debug("player: [%s]", self.player)
-	if (source ~= self.player) then
-		received = Exquisiloot:decompressFromSend(text)
-		if (received == nil or received["type"] == nil) then
-            -- Not a valid message
-			self:debug("Invalid message received")
-		elseif (received["type"] == "tooltipData") then
-            -- Recieved tooltip update
-            OnTooltipDataReceived(received, source)
-		elseif (received["type"] == "getTooltipData") then
-            -- Recieved getTooltip
-            OnGetTooltipDataReceived(received, distribution, source)
-        elseif (received["type"] == "ping") then
-            -- Recieved ping
-            OnPingReceived(received, source)
-        elseif (received["type"] == "pong") then
-            -- Received pong
-            OnPongReceived(received, source)
-		end
-	else
-        if (self:IsDebug()) then 
-            received = Exquisiloot:decompressFromSend(text)
-		    self:debug("Ignoring [%s] from self", received["type"])
-        end
-	end
-end
-
 local newTooltipData
 local function OnPingReceived(received, source)
     newTooltipData = C_DateAndTime.CompareCalendarTime(Exquisiloot.db.profile.tooltipDataLastUpdated, received["tooltipDataLastUpdated"])
@@ -148,4 +114,37 @@ function Exquisiloot:sendTooltipData(tooltipData, diff, target)
         self:sendGuild({type="tooltipData", data=Exquisiloot.db.profile.TooltipData, 
             diff=diff, timestamp=Exquisiloot.db.profile.TooltipDataLastUpdated})
     end
+end
+
+local received
+function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
+	self:debug("OnCommReceived")
+	--self:debug("prefix: [%s]", prefix)
+	self:debug("source: [%s]", source)
+	self:debug("distribution: [%s]", distribution)
+	--self:debug("player: [%s]", self.player)
+	if (source ~= self.player) then
+		received = Exquisiloot:decompressFromSend(text)
+		if (received == nil or received["type"] == nil) then
+            -- Not a valid message
+			self:debug("Invalid message received")
+		elseif (received["type"] == "tooltipData") then
+            -- Recieved tooltip update
+            OnTooltipDataReceived(received, source)
+		elseif (received["type"] == "getTooltipData") then
+            -- Recieved getTooltip
+            OnGetTooltipDataReceived(received, distribution, source)
+        elseif (received["type"] == "ping") then
+            -- Recieved ping
+            OnPingReceived(received, source)
+        elseif (received["type"] == "pong") then
+            -- Received pong
+            OnPongReceived(received, source)
+		end
+	else
+        if (self:IsDebug()) then 
+            received = Exquisiloot:decompressFromSend(text)
+		    self:debug("Ignoring [%s] from self", received["type"])
+        end
+	end
 end
