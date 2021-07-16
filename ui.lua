@@ -32,7 +32,7 @@ function ExquisilootImport()
 		end
 	end
 
-	Exquisiloot:sendTooltipData(tooltipData, false)
+	Exquisiloot:sendTooltipData(tooltipData)
 	Exquisiloot:updateTooltipData(tooltipData, false)
 
 	-- Clear out old text

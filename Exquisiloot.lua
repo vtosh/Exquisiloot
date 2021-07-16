@@ -1,7 +1,4 @@
-Exquisiloot = LibStub("AceAddon-3.0"):NewAddon("Exquisiloot", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0")
-
-Exquisiloot.commPrefix = "ExqiLootPrio"
-local commPrefix = Exquisiloot.commPrefix
+Exquisiloot = LibStub("AceAddon-3.0"):NewAddon("Exquisiloot", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
 
 -- Known bugs
 -- Raids are zoned into after midnight server time are counted as a new raid
@@ -15,7 +12,8 @@ local commPrefix = Exquisiloot.commPrefix
 			-- **Code to send/recieve - Done**
 			-- Only trust data from select people
 				-- **Add option to select trusted rank - Done**
-			-- Throttle responses to getTooltipData maybe via a voted council?
+			-- Throttle responses to getTooltipData
+                -- Add ping/pong - WIP done ping
 		-- Sync Raids - Not sure if needed
 	-- Masterlooter detection
 		-- Detect when using master looter
@@ -35,6 +33,7 @@ local defaults = {
         debug = false,
 		dungeon = false,
 		tooltipData = {},
+        tooltipDataLastUpdated = C_DateAndTime.GetCalendarTimeFromEpoch(0),
 		trustedRank = 1
     }
 }
@@ -66,18 +65,20 @@ function Exquisiloot:OnEnable()
     self:RegisterEvent("PLAYER_LEAVING_WORLD")
 	self:RegisterEvent("ENCOUNTER_END")
 
-	self:RegisterComm(commPrefix)
-	self:getTooltipData()
+    self:buildTrustBubble()
+	self:configureComm()
 
     self.activeRaid = nil
 end
 
 function Exquisiloot:onDisable()
+    self:CancelAllTimers()
+
     self:UnregisterEvent("PLAYER_ENTERING_WORLD")
     self:UnregisterEvent("PLAYER_LEAVING_WORLD")
 	self:UnregisterEvent("ENCOUNTER_END")
 
-	self:UnregisterComm(commLootPrefix)
+    self:cleardownComm()
 end
 
 function Exquisiloot:PLAYER_ENTERING_WORLD(self, event, ...)

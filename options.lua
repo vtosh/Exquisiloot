@@ -72,4 +72,5 @@ end
 
 function Exquisiloot:setTrustedRank(info, value)
 	self.db.profile.trustedRank = value
+    self.buildTrustBubble()
 end

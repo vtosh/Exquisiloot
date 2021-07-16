@@ -21,6 +21,8 @@ externals:
     url: https://repos.curseforge.com/wow/ace3/trunk/AceLocale-3.0
   Libs/Ace3/AceSerializer-3.0:
     url: https://repos.curseforge.com/wow/ace3/trunk/AceSerializer-3.0
+  Libs/Ace3/AceTimer-3.0:
+    url: https://repos.curseforge.com/wow/ace3/trunk/AceTimer-3.0
   Libs/ScrollingTable-4.1.3: 
         url: https://github.com/ddumont/lib-st.git
   Libs/LibCompress:

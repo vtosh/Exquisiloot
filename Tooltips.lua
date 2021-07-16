@@ -1,8 +1,12 @@
 local name, Exquisiloot = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(name)
 
-function Exquisiloot:updateTooltipData(tooltipData, diff)
-	if (not diff) then
+function Exquisiloot:updateTooltipData(tooltipData, diff, timestamp)
+    if (timestamp ~= nil) then
+        local timestamp = C_DateAndTime.GetCurrentCalendarTime()
+    end
+
+	if (diff == nil or not diff) then
 		-- Full replacement of tooltip data
 		self.db.profile.tooltipData = tooltipData
 		return
@@ -12,6 +16,8 @@ function Exquisiloot:updateTooltipData(tooltipData, diff)
 	for item, values in pairs(tooltipData) do
 		self.db.profile.tooltipData[item] = values
 	end
+
+    self.db.profile.tooltipDataLastUpdated = timestamp
 end
 
 
