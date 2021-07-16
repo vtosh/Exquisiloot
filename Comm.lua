@@ -5,77 +5,6 @@ local version = GetAddOnMetadata(name, "Version")
 local commPrefix = "ExqiLootPrio"
 local pingResponses
 
-function Exquisiloot:configureComm()
-    self:RegisterComm(commPrefix)
-
-    pingResponses = {}
-    self:sendGuild({type="ping", tooltipDataLastUpdated=Exquisiloot.db.profile.tooltipDataLastUpdated})
-
-    self:ScheduleTimer(function()
-        self:debug("We had [%d] responses to ping", #pingResponses)
-        -- Sort pingResponses by tooltipDataLastUpdated x[2]
-        table.sort(pingResponses, function(a,b)
-            if (C_DateAndTime.CompareCalendarTime(a[2], b[2]) > 0) then
-                return true
-            end
-            return false
-        end)
-        -- Iterate through the now sorted list, finding a trusted player to grab from
-        for i, pong in ipairs(pingResponses) do
-            -- TODO: Check trust, for now just trust in the vtosh!
-            if (Exquisiloot:validateTrust(pong[1])) then
-                -- Send request for update
-                Exquisiloot:sendWhisper({type="getTooltipData"}, pong[1])
-                break
-            end
-        end
-    end, 3.0)
-end
-
-function Exquisiloot:cleardownComm()
-	self:UnregisterComm(commPrefix)
-end
-
-function Exquisiloot:sendGuild(data)
-    self:SendCommMessage(commPrefix, self:compressComm(data), "GUILD")
-end
-
-function Exquisiloot:sendWhisper(data, player)
-    self:SendCommMessage(commPrefix, self:compressComm(data), "WHISPER", player)
-end
-
-function Exquisiloot:compressComm(data)
-    data["version"] = version
-	local message = self.libc:Compress(self.libs:Serialize(data))
-	return self.libce:Encode(message)
-end
-
-function Exquisiloot:decompressFromSend(message)
-	message = self.libce:Decode(message)
-	local text, error = self.libc:Decompress(message)
-	if (not text) then
-		self:debug("Error decompressing message")
-		return nil
-	end
-
-	success, message = self.libs:Deserialize(text)
-	if (not success) then
-		self:debug("Error deserializing message")
-		return nil
-	end
-
-	return message
-end
-
-function Exquisiloot:sendTooltipData(tooltipData, diff, target)
-    if (target ~= nil) then
-        self:sendWhisper({type="tooltipData", data=self.db.profile.TooltipData, 
-                diff=diff, timestamp=self.db.profile.TooltipDataLastUpdated}, target)
-    else
-        self:sendGuild({type="tooltipData", data=Exquisiloot.db.profile.TooltipData, 
-            diff=diff, timestamp=Exquisiloot.db.profile.TooltipDataLastUpdated})
-    end
-end
 
 local received
 function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
@@ -146,5 +75,77 @@ local function OnTooltipDataReceived(received, source)
 	self:debug("received tooltipdata")
     if (Exquisiloot:validateTrust(source)) then
 	    self:updateTooltipData(received["data"], received["diff"], received["timestamp"])
+    end
+end
+
+function Exquisiloot:configureComm()
+    self:RegisterComm(commPrefix)
+
+    pingResponses = {}
+    self:sendGuild({type="ping", tooltipDataLastUpdated=Exquisiloot.db.profile.tooltipDataLastUpdated})
+
+    self:ScheduleTimer(function()
+        self:debug("We had [%d] responses to ping", #pingResponses)
+        -- Sort pingResponses by tooltipDataLastUpdated x[2]
+        table.sort(pingResponses, function(a,b)
+            if (C_DateAndTime.CompareCalendarTime(a[2], b[2]) > 0) then
+                return true
+            end
+            return false
+        end)
+        -- Iterate through the now sorted list, finding a trusted player to grab from
+        for i, pong in ipairs(pingResponses) do
+            -- TODO: Check trust, for now just trust in the vtosh!
+            if (Exquisiloot:validateTrust(pong[1])) then
+                -- Send request for update
+                Exquisiloot:sendWhisper({type="getTooltipData"}, pong[1])
+                break
+            end
+        end
+    end, 3.0)
+end
+
+function Exquisiloot:cleardownComm()
+	self:UnregisterComm(commPrefix)
+end
+
+function Exquisiloot:sendGuild(data)
+    self:SendCommMessage(commPrefix, self:compressComm(data), "GUILD")
+end
+
+function Exquisiloot:sendWhisper(data, player)
+    self:SendCommMessage(commPrefix, self:compressComm(data), "WHISPER", player)
+end
+
+function Exquisiloot:compressComm(data)
+    data["version"] = version
+	local message = self.libc:Compress(self.libs:Serialize(data))
+	return self.libce:Encode(message)
+end
+
+function Exquisiloot:decompressFromSend(message)
+	message = self.libce:Decode(message)
+	local text, error = self.libc:Decompress(message)
+	if (not text) then
+		self:debug("Error decompressing message")
+		return nil
+	end
+
+	success, message = self.libs:Deserialize(text)
+	if (not success) then
+		self:debug("Error deserializing message")
+		return nil
+	end
+
+	return message
+end
+
+function Exquisiloot:sendTooltipData(tooltipData, diff, target)
+    if (target ~= nil) then
+        self:sendWhisper({type="tooltipData", data=self.db.profile.TooltipData, 
+                diff=diff, timestamp=self.db.profile.TooltipDataLastUpdated}, target)
+    else
+        self:sendGuild({type="tooltipData", data=Exquisiloot.db.profile.TooltipData, 
+            diff=diff, timestamp=Exquisiloot.db.profile.TooltipDataLastUpdated})
     end
 end
