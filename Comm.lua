@@ -35,6 +35,7 @@ end
 
 local newTooltipData
 local function OnPingReceived(received, source)
+    Exquisiloot:debug("Responding to ping from [%s]", source)
     newTooltipData = C_DateAndTime.CompareCalendarTime(Exquisiloot.db.profile.tooltipDataLastUpdated, received["tooltipDataLastUpdated"])
 
     if (newTooltipData > 0) then
@@ -73,6 +74,19 @@ local function OnTooltipDataReceived(received, source)
     if (Exquisiloot:validateTrust(source)) then
 	    Exquisiloot:updateTooltipData(received["data"], received["diff"], received["timestamp"])
     end
+end
+
+local isArena, isBattleground
+local function protectedCall(func, ...)
+    -- Check where we are, sometimes we don't want to respond when we are in a latency sensative place
+    isArena, _ = IsActiveBattlefieldArena()
+    isBattleground = UnitInBattleground("player")
+
+    if (not isArena and isBattleground == nil) then
+        Exquisiloot:debug("Not in Arena or Battleground so responding")
+        func(...)
+    end
+
 end
 
 function Exquisiloot:configureComm()
@@ -154,7 +168,7 @@ function Exquisiloot:OnCommReceived(prefix, text, distribution, source)
             OnGetTooltipDataReceived(received, distribution, source)
         elseif (received["type"] == "ping") then
             -- Recieved ping
-            OnPingReceived(received, source)
+            protectedCall(OnPingReceived, received, source)
         elseif (received["type"] == "pong") then
             -- Received pong
             OnPongReceived(received, source)
