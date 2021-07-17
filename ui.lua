@@ -1,6 +1,5 @@
 local name, addon = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(name)
-print(name)
 local ScrollingTable = LibStub("ScrollingTable");
 
 function ExquisilootImportExit(self)

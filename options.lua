@@ -1,6 +1,5 @@
 local addonName, addon = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(addonName)
-print("Hello from options.lua")
 local L = LibStub("AceLocale-3.0"):GetLocale("Exquisiloot")
 
 local numRanks, trustedRank
