@@ -40,9 +40,6 @@ local defaults = {
 
 function Exquisiloot:setupLibraries()
 	self.db = LibStub("AceDB-3.0"):New("ExquisilootDB", defaults, true)
-	self.libs = LibStub:GetLibrary("AceSerializer-3.0")
-	self.libc = LibStub:GetLibrary("LibCompress")
-	self.libce = self.libc:GetAddonEncodeTable()
 end
 
 function Exquisiloot:OnInitialize()
