@@ -42,6 +42,7 @@ local function OnPingReceived(received, source)
         Exquisiloot:debug("Logged in player has newer tooltipData")
         if (Exquisiloot:validateTrust(source)) then
 	        -- request their tooltipdata
+            Exquisiloot:sendWhisper({type="getTooltipData"}, source)
         end
     elseif (newTooltipData < 0) then
         -- Logged in player has older tooldtipData
