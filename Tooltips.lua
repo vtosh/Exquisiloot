@@ -11,6 +11,12 @@ function Exquisiloot:updateTooltipData(tooltipData, diff, timestamp)
         timestamp = C_DateAndTime.GetCurrentCalendarTime()
     end
 
+    newTooltipData = C_DateAndTime.CompareCalendarTime(self.db.profile.tooltipDataLastUpdated, timestamp)
+    if (newTooltipData < 0) then
+        -- Protect people from updating with older data
+        return
+    end
+
 	if (diff == nil or not diff) then
 		-- Full replacement of tooltip data
 		self.db.profile.tooltipData = tooltipData
