@@ -73,7 +73,7 @@ end
 function Exquisiloot:updateLootFrame(raidID)
 	local loots = {};
 	for i, loot in ipairs(self.db.profile.instances[raidID].loot) do
-		loots[i] = {i, "", loot["item"], loot["player"], ""}
+		loots[i] = {i, "", loot["itemLink"], loot["player"], ""}
 	end
 	ExquisilootLootScroll:SetData(loots, true)
 end
