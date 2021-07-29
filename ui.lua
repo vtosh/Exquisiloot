@@ -2,6 +2,8 @@ local name, addon = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(name)
 local ScrollingTable = LibStub("ScrollingTable");
 
+local GameTooltip = _G.GameTooltip
+
 function ExquisilootImportExit(self)
 	self:GetParent():Hide()
 end
@@ -55,8 +57,44 @@ local ExquisilootAttendanceTableColDef = {
 
 local ExquisilootLootTableColDef = {
 	{["name"] = "", ["width"] = 1}, -- Hidden Loot ID
-    {["name"] = "Icon", ["width"] = 30},
-    {["name"] = "Item", ["width"] = 145},
+    {   ["name"] = "Icon", 
+        ["width"] = 30, 
+        ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+            if fShow then
+                local itemTexture = self:GetCell(realrow, column)["value"] or nil
+                if itemTexture then
+                    if not (cellFrame.cellItemTexture) then
+                        cellFrame.cellItemTexture = cellFrame:CreateTexture();
+                    end
+                    cellFrame.cellItemTexture:SetTexture(itemTexture);
+                    cellFrame.cellItemTexture:SetTexCoord(0, 1, 0, 1);
+                    cellFrame.cellItemTexture:Show();
+                    cellFrame.cellItemTexture:SetPoint("CENTER", cellFrame.cellItemTexture:GetParent(), "CENTER");
+                    cellFrame.cellItemTexture:SetWidth(20);
+                    cellFrame.cellItemTexture:SetHeight(20);
+                end
+            end
+        end
+    },
+    {   ["name"] = "Item", 
+        ["width"] = 145,
+        ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+            local itemLink = self:GetCell(realrow, column)["value"] or nil
+            if itemLink then
+                cellFrame:SetScript("OnEnter", function()
+                    GameTooltip:SetOwner(cellFrame, "ANCHOR_RIGHT")
+                    GameTooltip:SetHyperlink(itemLink)
+                    GameTooltip:Show()
+                end)
+                cellFrame:SetScript("OnLeave", function()
+                    GameTooltip:Hide()
+                    GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+                end)
+                cellFrame.text:SetText(itemLink)
+            end
+
+        end
+    },
     {["name"] = "received", ["width"] = 92},
     {["name"] = "Note", ["width"] = 110},
 };
@@ -73,9 +111,28 @@ end
 function Exquisiloot:updateLootFrame(raidID)
 	local loots = {};
 	for i, loot in ipairs(self.db.profile.instances[raidID].loot) do
-		loots[i] = {i, "", loot["itemLink"], loot["player"], ""}
+        --Exquisiloot:debug(loot["texture"] or "no texture found")
+		loots[i] = {
+            ["cols"] = {
+                {
+                    ["value"] = i
+                },
+                {
+                    ["value"] = loot["texture"] or ""
+                },
+                {
+                    ["value"] = loot["itemLink"]
+                },
+                {
+                    ["value"] = loot["player"]
+                },
+                {
+                    ["value"] = ""
+                }
+            }
+        }
 	end
-	ExquisilootLootScroll:SetData(loots, true)
+	ExquisilootLootScroll:SetData(loots)
 end
 
 function Exquisiloot:updateAttendanceFrame(raidID)
@@ -102,7 +159,7 @@ function ExquisilootMainFrame_OnLoad()
 	ExquisilootAttendanceScroll:EnableSelection(true)
 	ExquisilootAttendanceScroll.frame:SetPoint("TOP", ExquisilootAttendanceScrollTitle, "BOTTOM", 0, -15)
 
-	ExquisilootLootScroll = ScrollingTable:CreateST(ExquisilootLootTableColDef, 6, 15, nil, ExquisilootMainFrame)
+	ExquisilootLootScroll = ScrollingTable:CreateST(ExquisilootLootTableColDef, 6, 20, nil, ExquisilootMainFrame)
 	ExquisilootLootScroll:EnableSelection(true)
 	ExquisilootLootScroll.frame:SetPoint("TOP", ExquisilootLootScrollTitle, "BOTTOM", 0, -15)
 

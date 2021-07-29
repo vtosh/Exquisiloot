@@ -163,7 +163,7 @@ function Exquisiloot:CHAT_MSG_LOOT(self, lootstring, playerName, languageName, c
         Exquisiloot:debug(quality)
         if (quality >= 4 or Exquisiloot:IsDebug() or (Exquisiloot:IsDungeon() and quality >=3)) then
             -- These are Epic or higher items we want to track
-            Exquisiloot:addItem(Exquisiloot.activeRaid, name, ItemID,itemLink, player)
+            Exquisiloot:addItem(Exquisiloot.activeRaid, name, texture, itemLink, player)
 			if (Exquisiloot.activeRaid == ExquisilootRaidScroll:GetSelection()) then
 				Exquisiloot:updateLootFrame(ExquisilootRaidScroll:GetSelection())
 			end
@@ -172,17 +172,17 @@ function Exquisiloot:CHAT_MSG_LOOT(self, lootstring, playerName, languageName, c
     end
 end
 
-function Exquisiloot:addItem(raidID, name, itemID, itemLink, player)
+function Exquisiloot:addItem(raidID, name, texture, itemLink, player)
 	table.insert(self.db.profile.instances[raidID].loot, {
         item = name,
-        itemID = ItemID,
+        texture = texture,
         itemLink = itemLink,
         player = player,
         date = C_DateAndTime.GetCurrentCalendarTime()
     })
 end
 
-function Exquisiloot:modItem(raidID, lootID, name, itemID, itemLink, player)
+function Exquisiloot:modItem(raidID, lootID, name, texture, itemLink, player)
 	-- pass
 end
 
