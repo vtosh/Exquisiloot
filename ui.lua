@@ -122,3 +122,33 @@ function ExquisilootPlayerDropdown()
 	--end
 
 end
+
+function ExquisilootExport()
+    local selected = ExquisilootRaidScroll:GetSelection()
+    if (not selected) then
+        print("Must have a raid selected to export data")
+        return
+    end
+    -- Lets export some data!
+    ExquisilootExportFrame:Show()
+    ExquisilootExportAttendanceEditBox:SetText(Exquisiloot:ExportAttendance(selected))
+    ExquisilootExportLootEditBox:SetText(Exquisiloot:ExportLoot(selected))
+end
+
+function Exquisiloot:ExportLoot(raidID)
+    local export = {}
+    local datetime = self.db.profile.instances[raidID].datestamp
+    for i, loot in ipairs(self.db.profile.instances[raidID].loot) do
+        export[i] = format("%s;%s;%s", datetime or "", loot["item"] or "", loot["player"] or "")
+	end
+    return table.concat(export, "\n")
+end
+
+function Exquisiloot:ExportAttendance(raidID)
+    local export = {}
+    local datetime = self.db.profile.instances[raidID].datestamp
+    for player, value in pairs(self.db.profile.instances[raidID].attendance) do
+        table.insert(export, player)
+	end
+    return format("!%s!\n%s", self.db.profile.instances[raidID].name, table.concat(export, ";\n"))
+end

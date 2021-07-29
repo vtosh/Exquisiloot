@@ -169,6 +169,17 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button name="ExquisilootExportButton" inherits="UIPanelButtonTemplate" text="Export">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="CENTER" relativePoint="TOP" x="0" y="-100" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExquisilootExport()
+					</OnClick>
+				</Scripts>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad inherit="prepend">
@@ -263,5 +274,101 @@
 				self:StopMovingOrSizing();
 			</OnDragStop>
 		</Scripts>
+	</Frame>
+	<Frame name="ExquisilootExportFrame" inherits="BackdropTemplate" hidden="true" toplevel="true">
+		<Size x="400" y="400" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootExportTitle" inherits="GameFontNormal" text="Export all the loot!">
+					<Anchors>
+						<Anchor point="TOP" y="-15" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<ScrollFrame name="ExquisilootExportAttendanceScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size x="300" y="125" />
+				<Anchors>
+					<Anchor point="CENTER" x="0" y="75" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="ExquisilootExportAttendanceTitle" inherits="GameFontNormal" text="Attendance Export">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-5" y="5" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<ScrollChild>
+					<EditBox name="ExquisilootExportAttendanceEditBox" letters="40000" multiLine="true" autoFocus="false" countInvisibleLetters="true">
+						<Size x="300" y="200" />
+						<FontString inherits="ChatFontNormal">
+							<Color r="1" g="1" b="1" />
+							<Shadow>
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+								<Color r="0" g="0" b="0" />
+							</Shadow>
+						</FontString>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<ScrollFrame name="ExquisilootExportLootScrollFrame" inherits="UIPanelScrollFrameTemplate">
+				<Size x="300" y="125" />
+				<Anchors>
+					<Anchor point="CENTER" x="0" y="-75" />
+				</Anchors>
+				<Layers>
+					<Layer level="OVERLAY">
+						<FontString name="ExquisilootLootAttendanceTitle" inherits="GameFontNormal" text="Loot Export">
+							<Anchors>
+								<Anchor point="BOTTOMLEFT" relativePoint="TOPLEFT" x="-5" y="5" />
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<ScrollChild>
+					<EditBox name="ExquisilootExportLootEditBox" letters="40000" multiLine="true" autoFocus="false" countInvisibleLetters="true">
+						<Size x="300" y="200" />
+						<FontString inherits="ChatFontNormal">
+							<Color r="1" g="1" b="1" />
+							<Shadow>
+								<Offset>
+									<AbsDimension x="1" y="-1" />
+								</Offset>
+								<Color r="0" g="0" b="0" />
+							</Shadow>
+						</FontString>
+					</EditBox>
+				</ScrollChild>
+			</ScrollFrame>
+			<Button name="ExquisilootExportCancelButton" inherits="UIPanelButtonTemplate" text="Cancel">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" x="-25" y="30" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						ExquisilootExportFrame:Hide()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
 	</Frame>
 </Ui>
