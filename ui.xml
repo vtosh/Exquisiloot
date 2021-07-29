@@ -180,6 +180,11 @@
 					</OnClick>
 				</Scripts>
 			</Button>
+			<Button name="ExquisilootMainFrameCancelButton" inherits="UIPanelCloseButton" text="Button1">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-5" y="-5" />
+				</Anchors>
+			</Button>
 		</Frames>
 		<Scripts>
 			<OnLoad inherit="prepend">
