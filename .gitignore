@@ -243,3 +243,4 @@ ModelManifest.xml
 
 Libs/*
 .release
+*.wowproj
