@@ -46,7 +46,7 @@ function Exquisiloot:OnInitialize()
 	self:setupLibraries()
     self:setupOptionPane()
 
-	self.masterloot = nil
+	self.masterLooter = nil
 	self:debug("Getting playername")
 	self.player, self.server = UnitName("player")
 	self:debug("Player: [%s]\nServer: [%s]", self.player, self.server or "")
@@ -93,6 +93,10 @@ function Exquisiloot:PLAYER_ENTERING_WORLD(self, event, ...)
 		Exquisiloot.raidMembers = Exquisiloot:getRaidMembers()
 		Exquisiloot:RegisterEvent("GROUP_ROSTER_UPDATE")
 
+        -- fire this once to make sure we've set the ML
+        Exquisiloot:PARTY_LOOT_METHOD_CHANGED()
+        Exquisiloot:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+
     end
 end
 
@@ -100,6 +104,7 @@ function Exquisiloot:PLAYER_LEAVING_WORLD(self, event, ...)
     -- Stop the raid
     Exquisiloot:UnregisterEvent("CHAT_MSG_LOOT")
 	Exquisiloot:UnregisterEvent("GROUP_ROSTER_UPDATE")
+    Exquisiloot:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED")
     Exquisiloot.activeRaid = nil
 	Exquisiloot.raidMembers = nil
 end

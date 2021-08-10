@@ -13,4 +13,5 @@ comm.lua
 trustBubble.lua
 options.lua
 Tooltips.lua
+trade.lua
 ui.xml
