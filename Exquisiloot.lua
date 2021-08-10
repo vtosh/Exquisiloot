@@ -153,6 +153,35 @@ function Exquisiloot:testEncounter()
 	end
 end
 
+local itemClass = {
+    2,  -- Weapon
+    3,  -- Gem
+    4   -- Armor
+}
+
+local function acceptedItemClass(class)
+    for index, value in ipairs(itemClass) do
+        if value == class then
+            return true
+        end
+    end
+    return false
+end
+
+local function lootLogCheck(name, quaility, class)
+    if (Exquisiloot:IsDebug()) then
+        return true
+    end
+
+    if (quaility >= 4 and acceptedItemClass(class)) then
+        return true
+    end
+
+    if (Exquisiloot:IsDungeon() and quaility >= 3 and acceptedItemClass(class)) then
+        return true
+    end
+end
+
 function Exquisiloot:CHAT_MSG_LOOT(self, lootstring, playerName, languageName, channelName, player, specialFlags, zoneChannelID, channelIndex, channelBaseName, unused, lineID, guid, bnSenderID, isMobile, isSubtitle, hideSenderInLetterbox, supressRaidIcons)
     if (player ~= nil and player ~= "" and Exquisiloot.activeRaid ~= nil) then
 		local itemLink = string.match(lootstring,"|%x+|Hitem:.-|h.-|h|r")
@@ -161,7 +190,7 @@ function Exquisiloot:CHAT_MSG_LOOT(self, lootstring, playerName, languageName, c
         Exquisiloot:debug(itemLink)
         Exquisiloot:debug(itemString)
         Exquisiloot:debug(quality)
-        if (quality >= 4 or Exquisiloot:IsDebug() or (Exquisiloot:IsDungeon() and quality >=3)) then
+        if (lootLogCheck(name, quality, class)) then
             -- These are Epic or higher items we want to track
             Exquisiloot:addItem(Exquisiloot.activeRaid, name, texture, itemLink, player)
 			if (Exquisiloot.activeRaid == ExquisilootRaidScroll:GetSelection()) then
