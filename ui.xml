@@ -269,7 +269,7 @@
 			</Button>
 		</Frames>
 		<Scripts>
-			<OnLoad>
+			<OnLoad inherit="prepend">
 				self:RegisterForDrag("LeftButton");
 			</OnLoad>
 			<OnDragStart>
@@ -376,5 +376,50 @@
 			</Button>
 		</Frames>
 	</Frame>
-    <GameTooltip name="ExquisilootTooltipLoot" inherits="GameTooltipTemplate" parent="UIParent" hidden="false"/>
+	<GameTooltip name="ExquisilootTooltipLoot" inherits="GameTooltipTemplate" hidden="false" parent="UIParent" />
+	<Frame name="ExquisilootMasterLootFrame" inherits="BackdropTemplate" hidden="true" movable="true">
+		<Size x="465" y="250" />
+		<Anchors>
+			<Anchor point="CENTER" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootMasterLootScrollTitle" inherits="GameFontNormal" text="Master loot distribution">
+					<Anchors>
+						<Anchor point="TOP" relativePoint="TOP" x="0" y="-15" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="ExquisilootMasterLootFrameCancelButton" inherits="UIPanelCloseButton" text="Button1">
+				<Anchors>
+					<Anchor point="TOPRIGHT" x="-5" y="-5" />
+				</Anchors>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				ExquisilootMasterLootFrame_OnLoad()
+
+				self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				self:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
 </Ui>

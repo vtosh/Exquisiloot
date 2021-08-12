@@ -307,6 +307,8 @@ function Exquisiloot:ChatCommand(input)
 		self:toggleUI()
 	elseif input:trim() == "options" then
         InterfaceOptionsFrame_OpenToCategory(self.optionsFrame)
+    elseif input:trim() == "ml" then
+        ExquisilootMasterLootFrame_OnShow()
     else
         LibStub("AceConfigCmd-3.0"):HandleCommand("exl", "Exquisiloot", input)
     end

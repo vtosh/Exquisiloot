@@ -43,6 +43,116 @@ function ExquisilootImport()
 	ExquisilootImportFrame:Hide()
 end
 
+local function cellUpdateIcon(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+    if fShow then
+        local itemTexture = self:GetCell(realrow, column)["value"] or nil
+        if itemTexture then
+            if not (cellFrame.cellItemTexture) then
+                cellFrame.cellItemTexture = cellFrame:CreateTexture();
+            end
+            cellFrame.cellItemTexture:SetTexture(itemTexture);
+            cellFrame.cellItemTexture:SetTexCoord(0, 1, 0, 1);
+            cellFrame.cellItemTexture:Show();
+            cellFrame.cellItemTexture:SetPoint("CENTER", cellFrame.cellItemTexture:GetParent(), "CENTER");
+            cellFrame.cellItemTexture:SetWidth(20);
+            cellFrame.cellItemTexture:SetHeight(20);
+        end
+    end
+end
+
+local function cellUpdateItemLink(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
+    local itemLink = self:GetCell(realrow, column)["value"] or nil
+    if itemLink then
+        cellFrame:SetScript("OnEnter", function()
+            GameTooltip:SetOwner(cellFrame, "ANCHOR_RIGHT")
+            GameTooltip:SetHyperlink(itemLink)
+            GameTooltip:Show()
+        end)
+        cellFrame:SetScript("OnLeave", function()
+            GameTooltip:Hide()
+            GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+        end)
+        cellFrame.text:SetText(itemLink)
+    end
+
+end
+
+activeButtons = {}
+
+local activeButton, activeloot = nil
+local function cellUpdateButton(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, scrollFrame, ...)
+    -- Recycle old button if it exists
+    local button  = nil
+    if _G[cellFrame:GetName().."_button"] then
+        button = _G[cellFrame:GetName().."_button"]
+    else
+        button = CreateFrame("Button", cellFrame:GetName().."_button", cellFrame, 'UIPanelButtonTemplate')
+    end
+    if fShow then
+        -- Reset button
+        button:SetPoint("CENTER", cellFrame, "CENTER");
+        button:SetText("Disenchant")
+        button:SetEnabled(true)
+        button:SetWidth(70)
+        button:SetScript("OnClick", function (self, button, down)
+            Exquisiloot:debug("Pressed [%s] which is item [%s]", self:GetName(), scrollFrame:GetCell(realrow, 3)["value"])
+            --activeloot.disenchanted = true
+            --activeloot.masterLootHold = false
+            --self:SetEnabled(false)
+
+        end)
+    else
+        if (activeButton ~= nil or activeButton.button ~= nil) then
+            activeButton.button:Hide()
+        end
+    end
+end
+
+local function cellUpdateDropDown(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, scrollFrame, ...)
+    -- Recycle old dropdown if it exists
+    local dropdown  = nil
+    local itemID = scrollFrame:GetCell(realrow, 1)["value"]
+    if _G[cellFrame:GetName().."_dropdown"] then
+        dropdown = _G[cellFrame:GetName().."_dropdown"]
+    else
+        dropdown = CreateFrame("Frame", cellFrame:GetName().."_dropdown", cellFrame, 'UIDropDownMenuTemplate')
+    end
+
+    -- Reset the dropdowns content
+    local player = Exquisiloot:GetTradeTargetByItemID(itemID)
+    UIDropDownMenu_SetSelectedValue(dropdown, player, player)
+    UIDropDownMenu_SetText(dropdown, player)
+
+    if fShow then
+        dropdown:SetPoint("CENTER", cellFrame, "CENTER");
+        UIDropDownMenu_SetWidth(dropdown, 90)
+
+        local info = {}
+        --UIDropDownMenu_Initialize(dropdown, function(self, level, menuList)
+        dropdown.initialize = function(self, level, menuList)
+            --activeloot = Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].loot[activeDropdowns[self:GetName()].itemID]
+            for player, _ in pairs(Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].attendance) do
+                wipe(info)
+                info.text = player
+                info.checked = false
+                info.hasArrow = false
+                info.func = function(b)
+                    -- Remove old trade from list
+                    Exquisiloot:RemoveTradeByItemID(itemID)
+                    -- Set up new trade
+                    UIDropDownMenu_SetSelectedValue(self, b.value, b.value)
+                    UIDropDownMenu_SetText(self, b.value)
+                    b.checked = true
+                    -- Can I put a call back here to "cross out" the item when the trade goes through?
+                    Exquisiloot:AddTrade(b.value, itemID)
+                end
+                UIDropDownMenu_AddButton(info)
+            end
+        end
+    end
+end
+
+
 local ExquisilootRaidTableColDef = {
 	{["name"] = "", ["width"] = 1}, -- Hidden Raid ID
     {["name"] = "Date", ["width"] = 60},
@@ -59,46 +169,25 @@ local ExquisilootLootTableColDef = {
 	{["name"] = "", ["width"] = 1}, -- Hidden Loot ID
     {   ["name"] = "Icon", 
         ["width"] = 30, 
-        ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
-            if fShow then
-                local itemTexture = self:GetCell(realrow, column)["value"] or nil
-                if itemTexture then
-                    if not (cellFrame.cellItemTexture) then
-                        cellFrame.cellItemTexture = cellFrame:CreateTexture();
-                    end
-                    cellFrame.cellItemTexture:SetTexture(itemTexture);
-                    cellFrame.cellItemTexture:SetTexCoord(0, 1, 0, 1);
-                    cellFrame.cellItemTexture:Show();
-                    cellFrame.cellItemTexture:SetPoint("CENTER", cellFrame.cellItemTexture:GetParent(), "CENTER");
-                    cellFrame.cellItemTexture:SetWidth(20);
-                    cellFrame.cellItemTexture:SetHeight(20);
-                end
-            end
-        end
+        ["DoCellUpdate"] = cellUpdateIcon
     },
     {   ["name"] = "Item", 
         ["width"] = 145,
-        ["DoCellUpdate"] = function(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, self, ...)
-            local itemLink = self:GetCell(realrow, column)["value"] or nil
-            if itemLink then
-                cellFrame:SetScript("OnEnter", function()
-                    GameTooltip:SetOwner(cellFrame, "ANCHOR_RIGHT")
-                    GameTooltip:SetHyperlink(itemLink)
-                    GameTooltip:Show()
-                end)
-                cellFrame:SetScript("OnLeave", function()
-                    GameTooltip:Hide()
-                    GameTooltip:SetOwner(UIParent, "ANCHOR_NONE")
-                end)
-                cellFrame.text:SetText(itemLink)
-            end
-
-        end
+        ["DoCellUpdate"] = cellUpdateItemLink
     },
     {["name"] = "received", ["width"] = 92},
     {["name"] = "Note", ["width"] = 110},
 };
 
+local ExquisilootMasterLootTableColDef = {
+    {["name"] = "", ["width"] = 1}, -- Hidden Loot ID
+    {["name"] = "Icon", ["width"] = 30, ["DoCellUpdate"] = cellUpdateIcon},
+    {["name"] = "Item", ["width"] = 145, ["DoCellUpdate"] = cellUpdateItemLink},
+    {["name"] = "Player", ["width"] = 90, ["DoCellUpdate"] = cellUpdateDropDown},
+    {["name"] = "Allocate", ["width"] = 30},
+    {["name"] = "Disenchant", ["width"] = 70, ["DoCellUpdate"] = cellUpdateButton},
+
+}
 
 function Exquisiloot:updateRaidFrame()
 	local raids = {};
@@ -127,12 +216,43 @@ function Exquisiloot:updateLootFrame(raidID)
                     ["value"] = loot["player"]
                 },
                 {
-                    ["value"] = ""
+                    ["value"] = loot["masterLootHold"] and "Held by MasterLooter" or loot["disenchanted"] and "Disenchanted" or ""
                 }
             }
         }
 	end
 	ExquisilootLootScroll:SetData(loots)
+end
+
+function Exquisiloot:updateMasterLootFrame()
+    local loots = {};
+	for i, loot in ipairs(Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].loot) do
+        if (loot["masterLootHold"] ~= nil and loot["masterLootHold"]) then
+		    table.insert(loots, {
+                ["cols"] = {
+                    {
+                        ["value"] = i
+                    },
+                    {
+                        ["value"] = loot["texture"] or ""
+                    },
+                    {
+                        ["value"] = loot["itemLink"]
+                    },
+                    {
+                        ["value"] = "" -- Player select
+                    },
+                    {
+                        ["value"] = "" -- roll button
+                    },
+                    {
+                        ["value"] = i -- disenchant button
+                    }
+                }
+            })
+	    end
+	    ExquisilootMasterLootScroll:SetData(loots)
+    end
 end
 
 function Exquisiloot:updateAttendanceFrame(raidID)
@@ -164,6 +284,23 @@ function ExquisilootMainFrame_OnLoad()
 	ExquisilootLootScroll.frame:SetPoint("TOP", ExquisilootLootScrollTitle, "BOTTOM", 0, -15)
 
 	tinsert(UISpecialFrames,"ExquisilootMainFrame");
+end
+
+function ExquisilootMasterLootFrame_OnLoad()
+    ExquisilootMasterLootScroll = ScrollingTable:CreateST(ExquisilootMasterLootTableColDef, 6, 30, nil, ExquisilootMasterLootFrame)
+    ExquisilootMasterLootScroll:EnableSelection(false)
+    ExquisilootMasterLootScroll.frame:SetPoint("TOP", ExquisilootMasterLootScrollTitle, "BOTTOM", 0, -15)
+end
+
+function ExquisilootMasterLootFrame_OnShow()
+    if (Exquisiloot.activeRaid == nil) then
+        print("Must be in an active raid to distribute loot as Master Looter")
+        return
+    end
+
+    Exquisiloot:updateMasterLootFrame()
+
+    ExquisilootMasterLootFrame:Show()
 end
 
 function Exquisiloot:showAddItem()
