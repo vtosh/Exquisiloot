@@ -320,21 +320,6 @@ function Exquisiloot:debug(...)
     end
 end
 
-function Exquisiloot:printLoot(raid, datestamp)
-    self:debug("Printing loot")
-    if (raid and datestamp) then
-        currentRaid = self:GetRaid(raid, datestamp)
-    elseif (not raid and self.activeRaid) then
-        currentRaid = self.activeRaid
-    end
-    -- self:debug(currentRaid)
-    if (not currentRaid) then
-        print("Can't return loot for a non-existant raid")
-        return
-    end
-    self:debug("Loot printing isn't implemented yet")
-end
-
 function Exquisiloot:calendarTimeToDatestamp(c_time)
     return format("%02d/%02d/%04d", c_time["monthDay"], c_time["month"], c_time["year"])
 end
