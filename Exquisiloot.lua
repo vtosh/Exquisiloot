@@ -225,12 +225,14 @@ function Exquisiloot:CHAT_MSG_LOOT(event, lootstring, playerName, languageName, 
 end
 
 function Exquisiloot:addItem(raidID, name, texture, itemLink, player)
+    local masterLootHold = player == self.masterLooter
 	table.insert(self.db.profile.instances[raidID].loot, {
         item = name,
         texture = texture,
         itemLink = itemLink,
         player = player,
-        date = C_DateAndTime.GetCurrentCalendarTime()
+        date = C_DateAndTime.GetCurrentCalendarTime(),
+        masterLootHold = masterLootHold or false
     })
 end
 
