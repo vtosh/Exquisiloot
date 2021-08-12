@@ -78,48 +78,50 @@ function Exquisiloot:onDisable()
     self:cleardownComm()
 end
 
-function Exquisiloot:PLAYER_ENTERING_WORLD(self, event, ...)
+function Exquisiloot:PLAYER_ENTERING_WORLD(event, ...)
     local isInstance, instanceType = IsInInstance();
-    if (isInstance == true and (instanceType == "raid" or (Exquisiloot.db.profile.dungeon and instanceType == "party"))) then
+    if (isInstance == true and (instanceType == "raid" or (self.db.profile.dungeon and instanceType == "party"))) then
         local instanceName, _, _, _, _, _, _, _, _, _ = GetInstanceInfo()
         local datetime = C_DateAndTime.GetCurrentCalendarTime()
         local datestamp = format("%02d/%02d/%d", datetime.monthDay, datetime.month, datetime.year)
-        Exquisiloot:debug("Entered %s at %02d:%02d %d/%d/%d", instanceName, datetime.hour, datetime.minute, datetime.monthDay, datetime.month, datetime.year)
+        self:debug("Entered %s at %02d:%02d %d/%d/%d", instanceName, datetime.hour, datetime.minute, datetime.monthDay, datetime.month, datetime.year)
         
-        Exquisiloot:SetActiveRaid(instanceName, datestamp)
-        Exquisiloot:RegisterEvent("CHAT_MSG_LOOT")
+        self:SetActiveRaid(instanceName, datestamp)
+        self:RegisterEvent("CHAT_MSG_LOOT")
 
 		-- Cache list of group memebers and register an event to update them if they change
-		Exquisiloot.raidMembers = Exquisiloot:getRaidMembers()
-		Exquisiloot:RegisterEvent("GROUP_ROSTER_UPDATE")
+		self.raidMembers = self:getRaidMembers()
+		self:RegisterEvent("GROUP_ROSTER_UPDATE")
 
         -- fire this once to make sure we've set the ML
-        Exquisiloot:PARTY_LOOT_METHOD_CHANGED()
-        Exquisiloot:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
-
+        self:PARTY_LOOT_METHOD_CHANGED()
+        self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
     end
 end
 
-function Exquisiloot:PLAYER_LEAVING_WORLD(self, event, ...)
+function Exquisiloot:PLAYER_LEAVING_WORLD(event, ...)
     -- Stop the raid
-    Exquisiloot:UnregisterEvent("CHAT_MSG_LOOT")
-	Exquisiloot:UnregisterEvent("GROUP_ROSTER_UPDATE")
-    Exquisiloot:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED")
-    Exquisiloot.activeRaid = nil
-	Exquisiloot.raidMembers = nil
+    self:UnregisterEvent("CHAT_MSG_LOOT")
+	self:UnregisterEvent("GROUP_ROSTER_UPDATE")
+    self:UnregisterEvent("PARTY_LOOT_METHOD_CHANGED")
+    self:UnregisterEvent("TRADE_SHOW")
+    self:UnregisterEvent("TRADE_CLOSED")
+    self:UnregisterEvent("TRADE_ACCEPT_UPDATE")
+    self.activeRaid = nil
+	self.raidMembers = nil
 end
 
-function Exquisiloot:GROUP_ROSTER_UPDATE(self, ...)
-	Exquisiloot.raidMembers = Exquisiloot:getRaidMembers()
+function Exquisiloot:GROUP_ROSTER_UPDATE(event, ...)
+	self.raidMembers = self:getRaidMembers()
 end
 
-function Exquisiloot:ENCOUNTER_END(self, encounterID, ...)
+function Exquisiloot:ENCOUNTER_END(event, encounterID, ...)
 	local encounterName, difficultyID, groupSize, success = ...
-	Exquisiloot:debug("Fight complete: %s - %s", encounterName or "", tostring(success) or "")
-	if (Exquisiloot.activeRaid ~= nil) then
+	self:debug("Fight complete: %s - %s", encounterName or "", tostring(success) or "")
+	if (self.activeRaid ~= nil) then
 		-- Keep attendance simple for now
-		for player, value in pairs(Exquisiloot:getRaidMembers()) do
-			Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].attendance[player] = true
+		for player, value in pairs(self:getRaidMembers()) do
+			self.db.profile.instances[self.activeRaid].attendance[player] = true
 		end
 		
 		-- Use this later for more complicated attendance tracking
@@ -279,7 +281,7 @@ function Exquisiloot:SetActiveRaid(raid, datestamp)
         end
         return
     end
-    Exquisiloot:debug("No Raid to set active")
+    self:debug("No Raid to set active")
 end
 
 function Exquisiloot:ChatCommand(input)

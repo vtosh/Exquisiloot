@@ -2,10 +2,10 @@ local addonName, addon = ...
 local Exquisiloot = LibStub("AceAddon-3.0"):GetAddon(addonName)
 
 local lootmethod, partyID, raidID
-function Exquisiloot:PARTY_LOOT_METHOD_CHANGED(self, ...)
+function Exquisiloot:PARTY_LOOT_METHOD_CHANGED(event, ...)
     lootmethod, partyID, raidID = GetLootMethod()
     if (lootmethod ~= "master") then
-        Exquisiloot.masterLooter = nil
+        self.masterLooter = nil
         return
     end
 
