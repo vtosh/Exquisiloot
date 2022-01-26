@@ -8,15 +8,8 @@ Exquisiloot = LibStub("AceAddon-3.0"):NewAddon("Exquisiloot", "AceConsole-3.0", 
 
 -- TODO:
 	-- Syncing
-		-- Sync tooltip data
-			-- **Code to send/recieve - Done**
-			-- Only trust data from select people
-				-- **Add option to select trusted rank - Done**
-			-- Throttle responses to getTooltipData
-                -- Add ping/pong - WIP done ping
 		-- Sync Raids - Not sure if needed
 	-- Masterlooter detection
-		-- Detect when using master looter
 		-- If loot goes to ML mark it in some way
 		-- If ML trades loot to someone mark the loot as going to that person
 		-- See if its possible to expand ML frame
@@ -96,6 +89,12 @@ function Exquisiloot:PLAYER_ENTERING_WORLD(event, ...)
         -- fire this once to make sure we've set the ML
         self:PARTY_LOOT_METHOD_CHANGED()
         self:RegisterEvent("PARTY_LOOT_METHOD_CHANGED")
+
+        -- Lets get Trading
+        self:RegisterEvent("TRADE_SHOW")
+        self:RegisterEvent("TRADE_CLOSED")
+        self:RegisterEvent("TRADE_ACCEPT_UPDATE")
+        self:RegisterEvent("UI_INFO_MESSAGE")
     end
 end
 
@@ -107,6 +106,8 @@ function Exquisiloot:PLAYER_LEAVING_WORLD(event, ...)
     self:UnregisterEvent("TRADE_SHOW")
     self:UnregisterEvent("TRADE_CLOSED")
     self:UnregisterEvent("TRADE_ACCEPT_UPDATE")
+    self:UnregisterEvent("UI_INFO_MESSAGE")
+
     self.activeRaid = nil
 	self.raidMembers = nil
 end
@@ -167,7 +168,8 @@ local itemClass = {
     [7] =  {     -- Tradeskill
         13       -- Material
     },
-    [9] = true   -- Recipe
+    [9] = true,  -- Recipe
+    [15] = true  -- Miscellaneous (needed for tier tokens!)
 }
 
 local function acceptedItemClass(classID, subclassID)
@@ -191,7 +193,7 @@ local function lootLogCheck(quality, classID, subclassID)
         return true
     end
 
-    if (quality >= 0 and acceptedItemClass(classID, subclassID)) then    -- 4 = epic
+    if (quality >= 4 and acceptedItemClass(classID, subclassID)) then    -- 4 = epic
         return true
     end
 
@@ -210,13 +212,13 @@ function Exquisiloot:CHAT_MSG_LOOT(event, lootstring, playerName, languageName, 
         local itemString = string.match(itemLink, "item[%-?%d:]+")
         local name, _, quality, _, _, class, subclass, _, equipSlot, texture, _, ClassID, SubClassID = GetItemInfo(itemString)
         self:debug(itemLink)
-        self:debug(itemstring)
+        self:debug(itemString)
         self:debug(quality)
         self:debug(class)
         if (lootLogCheck(quality, ClassID, SubClassID)) then
             -- This is an item we want to track
             self:addItem(self.activeRaid, name, texture, itemLink, player)
-			if (self.activeRaid == self:GetSelection()) then
+			if (self.activeRaid == ExquisilootRaidScroll:GetSelection()) then
 				self:updateLootFrame(ExquisilootRaidScroll:GetSelection())
 			end
             return

@@ -111,7 +111,7 @@ end
 local function cellUpdateDropDown(rowFrame, cellFrame, data, cols, row, realrow, column, fShow, scrollFrame, ...)
     -- Recycle old dropdown if it exists
     local dropdown  = nil
-    local itemID = scrollFrame:GetCell(realrow, 1)["value"]
+    local itemLink = scrollFrame:GetCell(realrow, 3)["value"]
     if _G[cellFrame:GetName().."_dropdown"] then
         dropdown = _G[cellFrame:GetName().."_dropdown"]
     else
@@ -119,7 +119,7 @@ local function cellUpdateDropDown(rowFrame, cellFrame, data, cols, row, realrow,
     end
 
     -- Reset the dropdowns content
-    local player = Exquisiloot:GetTradeTargetByItemID(itemID)
+    local player = Exquisiloot:GetTradeTargetByitemLink(itemLink)
     UIDropDownMenu_SetSelectedValue(dropdown, player, player)
     UIDropDownMenu_SetText(dropdown, player)
 
@@ -130,7 +130,7 @@ local function cellUpdateDropDown(rowFrame, cellFrame, data, cols, row, realrow,
         local info = {}
         --UIDropDownMenu_Initialize(dropdown, function(self, level, menuList)
         dropdown.initialize = function(self, level, menuList)
-            --activeloot = Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].loot[activeDropdowns[self:GetName()].itemID]
+            --activeloot = Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].loot[activeDropdowns[self:GetName()].itemLink]
             for player, _ in pairs(Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].attendance) do
                 wipe(info)
                 info.text = player
@@ -138,13 +138,13 @@ local function cellUpdateDropDown(rowFrame, cellFrame, data, cols, row, realrow,
                 info.hasArrow = false
                 info.func = function(b)
                     -- Remove old trade from list
-                    Exquisiloot:RemoveTradeByItemID(itemID)
+                    Exquisiloot:RemoveTradeByitemLink(itemLink)
                     -- Set up new trade
                     UIDropDownMenu_SetSelectedValue(self, b.value, b.value)
                     UIDropDownMenu_SetText(self, b.value)
                     b.checked = true
                     -- Can I put a call back here to "cross out" the item when the trade goes through?
-                    Exquisiloot:AddTrade(b.value, itemID)
+                    Exquisiloot:AddTrade(b.value, itemLink)
                 end
                 UIDropDownMenu_AddButton(info)
             end
