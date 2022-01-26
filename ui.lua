@@ -269,8 +269,10 @@ function ExquisilootMainFrame_OnLoad()
 	ExquisilootRaidScroll.frame:SetPoint("TOP", ExquisilootRaidScrollTitle, "BOTTOM", 0, -15)
 	ExquisilootRaidScroll:RegisterEvents({
 		["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+            Exquisiloot:debug(Exquisiloot:dump(data[realrow]))
 			Exquisiloot:updateLootFrame(data[realrow][1])
 			Exquisiloot:updateAttendanceFrame(data[realrow][1])
+            ExquisilootModItemFrame:Hide()
 		return false
 		end,
 	})
@@ -282,6 +284,13 @@ function ExquisilootMainFrame_OnLoad()
 	ExquisilootLootScroll = ScrollingTable:CreateST(ExquisilootLootTableColDef, 6, 20, nil, ExquisilootMainFrame)
 	ExquisilootLootScroll:EnableSelection(true)
 	ExquisilootLootScroll.frame:SetPoint("TOP", ExquisilootLootScrollTitle, "BOTTOM", 0, -15)
+    ExquisilootLootScroll:RegisterEvents({
+        ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+            Exquisiloot:debug(Exquisiloot:dump(data[realrow]))
+            Exquisiloot:showModItem(ExquisilootRaidScroll:GetSelection(), data[realrow]["cols"][1]["value"])
+        return false
+        end,
+    })
 
 	tinsert(UISpecialFrames,"ExquisilootMainFrame");
 end
@@ -307,15 +316,70 @@ function Exquisiloot:showAddItem()
 	ExquisilootAddItemFrame:Show()
 end
 
-function ExquisilootPlayerDropdown()
-	local info = {}
+function Exquisiloot:showModItem(raidID, lootID)
+    loot = self.db.profile.instances[raidID].loot[lootID]
+    -- Recycle old dropdown if it exists
+    local dropdown = nil
+    if _G["ExquisilootModItemPlayer"] then
+        dropdown = _G["ExquisilootModItemPlayer"]
+    else
+        dropdown = CreateFrame("Frame", "ExquisilootModItemPlayer", ExquisilootModItemFrame, "UIDropDownMenuTemplate")
+    end
+
+    -- Reset dropdown content
+    UIDropDownMenu_SetSelectedValue(dropdown, loot["player"], loot["player"])
+    UIDropDownMenu_SetText(dropdown, loot["player"])
+
+    -- Anchor to the correct place
+    dropdown:SetPoint("LEFT", ExquisilootModItemPlayerTitle, "RIGHT", 15, 0);
+    UIDropDownMenu_SetWidth(dropdown, 90)
+
+    -- dropdown init
+    local info = {}
+    dropdown.initialize = function(self, level, menuList)
+        for player, _ in pairs(Exquisiloot.db.profile.instances[raidID].attendance) do
+            wipe(info)
+            info.text = player
+            info.checked = false
+            info.hasArrow = false
+            info.func = function(b)
+                UIDropDownMenu_SetSelectedValue(self, b.value, b.value)
+                UIDropDownMenu_SetText(self, b.value)
+                b.checked = true
+            end
+            UIDropDownMenu_AddButton(info)
+        end
+    end
+
+    ExquisilootModItemItemName:SetText(loot["itemLink"])
+    ExquisilootModItemRaidID:SetText(raidID)
+    ExquisilootModItemItemID:SetText(itemID)
+
+    ExquisilootModItemFrame:Show()
+end
+
+function Exquisiloot:saveModItem()
+    local newPlayer = ExquisilootModItemPlayer.selectedValue
+    local raid = ExquisilootRaidScroll:GetSelection()
+    local item = ExquisilootLootScroll:GetSelection()
+    self.db.profile.instances[raid].loot[item]["player"] = newPlayer
+    ExquisilootLootScroll.data[item]["cols"][4] = newPlayer
+    ExquisilootLootScroll:ClearSelection()
+
+    --Exquisiloot:updateLootFrame(self.activeRaid)
+
+    ExquisilootModItemFrame:Hide()
+end
+
+--function ExquisilootPlayerDropdown()
+--	local info = {}
 	--for player, _ in pairs(Exquisiloot:getRaidMembers()) do
 		--self:debug(player)
 	--	info.value = player
 	--	UIDropDownMenu_AddButton(info)
 	--end
 
-end
+--end
 
 function ExquisilootExport()
     local selected = ExquisilootRaidScroll:GetSelection()

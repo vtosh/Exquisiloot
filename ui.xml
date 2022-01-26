@@ -135,6 +135,11 @@
 				<Anchors>
 					<Anchor point="BOTTOM" x="0" y="15" />
 				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:showModItem(ExquisilootRaidScroll:GetSelection(), ExquisilootLootScroll:GetSelection())
+					</OnClick>
+				</Scripts>
 			</Button>
 			<Button name="ExquisilootDeleteRaidButton" inherits="UIPanelButtonTemplate" text="Delete">
 				<Size x="75" y="23" />
@@ -277,6 +282,97 @@
 			</OnDragStart>
 			<OnDragStop>
 				self:StopMovingOrSizing();
+			</OnDragStop>
+		</Scripts>
+	</Frame>
+	<Frame name="ExquisilootModItemFrame" inherits="BackdropTemplate" hidden="true" movable="true">
+		<Size x="300" y="200" />
+		<Anchors>
+			<Anchor point="TOPLEFT" x="35" y="-26" />
+		</Anchors>
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_DIALOG_32_32" keyType="string" type="global" />
+		</KeyValues>
+		<Backdrop bgFile="Interface\DialogFrame\UI-DialogBox-Background" edgeFile="Interface\DialogFrame\UI-DialogBox-Border" tile="true">
+			<BackgroundInsets>
+				<AbsInset left="11" right="12" top="12" bottom="11" />
+			</BackgroundInsets>
+			<TileSize val="32" />
+			<EdgeSize val="32" />
+		</Backdrop>
+		<Layers>
+			<Layer level="OVERLAY">
+				<FontString name="ExquisilootModItemTitle" inherits="GameFontNormal" text="Modify Item">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOP" x="0" y="-25" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootModItemItemTitle" inherits="GameFontNormal" text="Item:">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-50" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootModItemPlayerTitle" inherits="GameFontNormal" text="Player:">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" x="15" y="-75" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootModItemRaidID" inherits="GameFontNormal" hidden="true" text="">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootModItemItemID" inherits="GameFontNormal" hidden="true" text="">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="TOPLEFT" />
+					</Anchors>
+				</FontString>
+				<FontString name="ExquisilootModItemItemName" inherits="GameFontNormal" text="" nonspacewrap="true">
+					<Size x="80" y="20" />
+					<Anchors>
+						<Anchor point="LEFT" relativeTo="ExquisilootModItemItemTitle" relativePoint="RIGHT" x="15" y="0" />
+					</Anchors>
+				</FontString>
+			</Layer>
+		</Layers>
+		<Frames>
+			<Button name="ExquisilootModItemAddButton" inherits="UIPanelButtonTemplate" text="Modify">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMRIGHT" relativeTo="ExquisilootModItemFrame" relativePoint="BOTTOM" x="0" y="25" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						Exquisiloot:saveModItem()
+					</OnClick>
+				</Scripts>
+			</Button>
+			<Button name="ExquisilootModItemCancelButton" inherits="UIPanelButtonTemplate" text="Cancel">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOMLEFT" relativeTo="ExquisilootModItemFrame" relativePoint="BOTTOM" x="0" y="25" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						                        ExquisilootModItemFrame:Hide()
+					</OnClick>
+				</Scripts>
+			</Button>
+		</Frames>
+		<Scripts>
+			<OnLoad inherit="prepend">
+				                self:RegisterForDrag("LeftButton");
+			</OnLoad>
+			<OnDragStart>
+				                self:StartMoving();
+			</OnDragStart>
+			<OnDragStop>
+				                self:StopMovingOrSizing();
 			</OnDragStop>
 		</Scripts>
 	</Frame>
