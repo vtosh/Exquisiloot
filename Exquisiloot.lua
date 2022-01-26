@@ -163,11 +163,11 @@ end
 
 local itemClass = {
     [2] = true,  -- Weapon
-    [3] = true,  -- Gem
+--    [3] = true,  -- Gem
     [4] = true,  -- Armor
-    [7] =  {     -- Tradeskill
-        13       -- Material
-    },
+--    [7] =  {     -- Tradeskill
+--        13       -- Material
+--    },
     [9] = true,  -- Recipe
     [15] = true  -- Miscellaneous (needed for tier tokens!)
 }
