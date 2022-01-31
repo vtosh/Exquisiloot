@@ -250,17 +250,11 @@ end
 function Exquisiloot:deleteRaid(raidID)
 	self:debug("Deleting Raid %d: %s", raidID, self.db.profile.instances[raidID].name)
 	table.remove(self.db.profile.instances, raidID)
-	ExquisilootAttendanceScroll:SetData({}, true)
-	ExquisilootLootScroll:SetData({}, true)
-	self:updateRaidFrame()
-	ExquisilootRaidScroll:ClearSelection()
 end
 
 function Exquisiloot:deleteLoot(raidID, lootID)
 	self:debug("Deleting Raid [%s] loot %d: %s", self.db.profile.instances[raidID].name, lootID, self.db.profile.instances[raidID].loot[lootID].item)
 	table.remove(self.db.profile.instances[raidID].loot, lootID)
-	self:updateLootFrame(raidID)
-	ExquisilootLootScroll:ClearSelection()
 end
 
 local function removeKey(table, key)
@@ -269,14 +263,11 @@ local function removeKey(table, key)
 	return element
 end
 
-function Exquisiloot:deleteAttendance(raidID, playerID)
-	player = ExquisilootAttendanceScroll:GetRow(playerID)[1]
+function Exquisiloot:deleteAttendance(raidID, player)
 	self:debug("Deleting attendance for %s during raid %s", player, self.db.profile.instances[raidID].name)
 	self:debug("Player table: %s", self:dump(self.db.profile.instances[raidID].attendance))
 	--table.remove(self.db.profile.instances[raidID].attendance, player)
 	removeKey(self.db.profile.instances[raidID].attendance, player)
-	self:updateAttendanceFrame(raidID)
-	ExquisilootAttendanceScroll:ClearSelection()
 end
 
 function Exquisiloot:GetRaid(raid, datestamp)

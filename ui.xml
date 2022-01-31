@@ -126,7 +126,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Exquisiloot:deleteLoot(ExquisilootRaidScroll:GetSelection(), ExquisilootLootScroll:GetSelection())
+						ExquisilootDeleteLootButton_OnClick()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -137,7 +137,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Exquisiloot:deleteRaid(ExquisilootRaidScroll:GetSelection())
+						ExquisilootDeleteRaidButton_OnClick()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -148,7 +148,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Exquisiloot:deleteAttendance(ExquisilootRaidScroll:GetSelection(), ExquisilootAttendanceScroll:GetSelection())
+						ExquisilootDeleteAttendanceButton_OnClick()
 					</OnClick>
 				</Scripts>
 			</Button>
@@ -178,6 +178,17 @@
 				<Anchors>
 					<Anchor point="TOPRIGHT" x="-5" y="-5" />
 				</Anchors>
+			</Button>
+			<Button name="ExquisilootModItemButton" inherits="UIPanelButtonTemplate" text="Modify">
+				<Size x="75" y="23" />
+				<Anchors>
+					<Anchor point="BOTTOM" x="0" y="15" />
+				</Anchors>
+				<Scripts>
+					<OnClick>
+						                        ExquisilootModItemFrame_OnShow(ExquisilootRaidScroll:GetSelection(), ExquisilootLootScroll:GetSelection())
+					</OnClick>
+				</Scripts>
 			</Button>
 		</Frames>
 		<Scripts>
@@ -274,7 +285,7 @@
 			</OnDragStop>
 		</Scripts>
 	</Frame>
-	<Frame name="ExquisilootModItemFrame" inherits="BackdropTemplate" hidden="true" movable="true">
+	<Frame name="ExquisilootModItemFrame" inherits="BackdropTemplate" hidden="true" movable="true" frameStrata="HIGH">
 		<Size x="300" y="200" />
 		<Anchors>
 			<Anchor point="TOPLEFT" x="35" y="-26" />

@@ -191,44 +191,20 @@ local ExquisilootMasterLootTableColDef = {
 
 function Exquisiloot:updateRaidFrame()
 	local raids = {};
-	for i, raid in ipairs(self.db.profile.instances) do
-		raids[i] = {i, raid["datestamp"], raid["name"]}
-	end
-	ExquisilootRaidScroll:SetData(raids, true)
+    if (self.db.profile.instances) then
+        for i, raid in ipairs(self.db.profile.instances) do
+            raids[i] = {i, raid["datestamp"], raid["name"]}
+        end
+    end
+    ExquisilootRaidScroll:SetData(raids, true)
 end
 
 function Exquisiloot:updateLootFrame(raidID)
 	local loots = {};
-	for i, loot in ipairs(self.db.profile.instances[raidID].loot) do
-        --Exquisiloot:debug(loot["texture"] or "no texture found")
-		loots[i] = {
-            ["cols"] = {
-                {
-                    ["value"] = i
-                },
-                {
-                    ["value"] = loot["texture"] or ""
-                },
-                {
-                    ["value"] = loot["itemLink"]
-                },
-                {
-                    ["value"] = loot["player"]
-                },
-                {
-                    ["value"] = loot["masterLootHold"] and "Held by MasterLooter" or loot["disenchanted"] and "Disenchanted" or ""
-                }
-            }
-        }
-	end
-	ExquisilootLootScroll:SetData(loots)
-end
-
-function Exquisiloot:updateMasterLootFrame()
-    local loots = {};
-	for i, loot in ipairs(Exquisiloot.db.profile.instances[Exquisiloot.activeRaid].loot) do
-        if (loot["masterLootHold"] ~= nil and loot["masterLootHold"]) then
-		    table.insert(loots, {
+    if (self.db.profile.instances[raidID].loot) then
+        for i, loot in ipairs(self.db.profile.instances[raidID].loot) do
+            --Exquisiloot:debug(loot["texture"] or "no texture found")
+            loots[i] = {
                 ["cols"] = {
                     {
                         ["value"] = i
@@ -240,27 +216,59 @@ function Exquisiloot:updateMasterLootFrame()
                         ["value"] = loot["itemLink"]
                     },
                     {
-                        ["value"] = "" -- Player select
+                        ["value"] = loot["player"]
                     },
                     {
-                        ["value"] = "" -- roll button
-                    },
-                    {
-                        ["value"] = i -- disenchant button
+                        ["value"] = loot["masterLootHold"] and "Held by MasterLooter" or loot["disenchanted"] and "Disenchanted" or ""
                     }
                 }
-            })
-	    end
-	    ExquisilootMasterLootScroll:SetData(loots)
+            }
+        end
     end
+    ExquisilootLootScroll:SetData(loots)
+end
+
+function Exquisiloot:updateMasterLootFrame()
+    local loots = {};
+    if (self.db.profile.instances[Exquisiloot.activeRaid].loot) then
+        for i, loot in ipairs(self.db.profile.instances[Exquisiloot.activeRaid].loot) do
+            if (loot["masterLootHold"] ~= nil and loot["masterLootHold"]) then
+                table.insert(loots, {
+                    ["cols"] = {
+                        {
+                            ["value"] = i
+                        },
+                        {
+                            ["value"] = loot["texture"] or ""
+                        },
+                        {
+                            ["value"] = loot["itemLink"]
+                        },
+                        {
+                            ["value"] = "" -- Player select
+                        },
+                        {
+                            ["value"] = "" -- roll button
+                        },
+                        {
+                            ["value"] = i -- disenchant button
+                        }
+                    }
+                })
+            end
+        end
+    end
+    ExquisilootMasterLootScroll:SetData(loots)
 end
 
 function Exquisiloot:updateAttendanceFrame(raidID)
 	local players = {};
-	for player, value in pairs(self.db.profile.instances[raidID].attendance) do
-		table.insert(players, {player, ""})
-	end
-	ExquisilootAttendanceScroll:SetData(players, true)
+    if (self.db.profile.instances[raidID].attendance) then
+        for player, value in pairs(self.db.profile.instances[raidID].attendance) do
+            table.insert(players, {player, ""})
+        end
+    end
+    ExquisilootAttendanceScroll:SetData(players, true)
 end
 
 function ExquisilootMainFrame_OnLoad()
@@ -285,14 +293,70 @@ function ExquisilootMainFrame_OnLoad()
 	ExquisilootLootScroll:EnableSelection(true)
 	ExquisilootLootScroll.frame:SetPoint("TOP", ExquisilootLootScrollTitle, "BOTTOM", 0, -15)
     ExquisilootLootScroll:RegisterEvents({
-        ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
+        ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, button, ...)
             Exquisiloot:debug(Exquisiloot:dump(data[realrow]))
-            ExquisilootModItemFrame_OnShow(ExquisilootRaidScroll:GetSelection(), data[realrow]["cols"][1]["value"])
+            Exquisiloot:debug("Loot frame pressed with - %s", button)
+            if button == "RightButton" then
+                scrollingTable:SetSelection(realrow)
+                ExquisilootModItemFrame_OnShow(ExquisilootRaidScroll:GetSelection(), data[realrow]["cols"][1]["value"])
+            end
         return false
         end,
     })
 
 	tinsert(UISpecialFrames,"ExquisilootMainFrame");
+
+    StaticPopupDialogs["EXQUISILOOT_DELETE_RAID"] = {
+        text = "Are you sure you want to delete %s?",
+        button1 = YES,
+        button2 = NO,
+        OnAccept = function(self, raidID)
+            Exquisiloot:deleteRaid(self.raidID)
+            ExquisilootAttendanceScroll:SetData({}, true)
+            ExquisilootLootScroll:SetData({}, true)
+            Exquisiloot:updateRaidFrame()
+            ExquisilootRaidScroll:ClearSelection()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopupDialogs["EXQUISILOOT_DELETE_LOOT"] = {
+        text = "Are you sure you want to delete %s from the raid %s?",
+        button1 = YES,
+        button2 = NO,
+        OnAccept = function(self, raidID, itemID)
+            Exquisiloot:deleteLoot(self.raidID, self.itemID)
+            Exquisiloot:updateLootFrame(self.raidID)
+            ExquisilootLootScroll:ClearSelection()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopupDialogs["EXQUISILOOT_DELETE_ATTENDANCE"] = {
+        text = "Are you sure you want to remove player %s from the raid %s?",
+        button1 = YES,
+        button2 = NO,
+        OnAccept = function(self, raidID, player)
+            Exquisiloot:deleteAttendance(self.raidID, self.player)
+            Exquisiloot:updateAttendanceFrame(self.raidID)
+            ExquisilootAttendanceScroll:ClearSelection()
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopupDialogs["EXQUISILOOT_ERROR"] = {
+        text = "%s",
+        button1 = OKAY,
+        timeout = 10,
+        whileDead = true,
+        hideOnEscape = true,
+    }
 end
 
 function ExquisilootMasterLootFrame_OnLoad()
@@ -303,13 +367,69 @@ end
 
 function ExquisilootMasterLootFrame_OnShow()
     if (Exquisiloot.activeRaid == nil) then
-        print("Must be in an active raid to distribute loot as Master Looter")
+        StaticPopup_Show("EXQUISILOOT_ERROR", "Must be in an active raid to distribute loot as Master Looter")
         return
     end
 
     Exquisiloot:updateMasterLootFrame()
 
     ExquisilootMasterLootFrame:Show()
+end
+
+function ExquisilootDeleteRaidButton_OnClick()
+    local raidID = ExquisilootRaidScroll:GetSelection()
+    if not raidID then
+        StaticPopup_Show("EXQUISILOOT_ERROR", "A raid must be selected in order to delete it")
+        return
+    end
+    local timestamp = Exquisiloot.db.profile.instances[raidID].datestamp
+    local name = Exquisiloot.db.profile.instances[raidID].name
+    local popup = StaticPopup_Show("EXQUISILOOT_DELETE_RAID", format("%s - %s", timestamp, name))
+    if (popup) then
+        popup.raidID = raidID
+    end
+end
+
+function ExquisilootDeleteLootButton_OnClick()
+    local raidID = ExquisilootRaidScroll:GetSelection()
+    if not raidID then
+        StaticPopup_Show("EXQUISILOOT_ERROR", "A raid must be selected in order to delete an piece of loot")
+        return
+    end
+    local itemID = ExquisilootLootScroll:GetSelection()
+    if not itemID then
+        StaticPopup_Show("EXQUISILOOT_ERROR", "A piece of loot must be selected in order to delete it")
+        return
+    end
+
+    local timestamp = Exquisiloot.db.profile.instances[raidID].datestamp
+    local raidName = Exquisiloot.db.profile.instances[raidID].name
+    local lootName = Exquisiloot.db.profile.instances[raidID].loot[itemID].itemLink
+    local popup = StaticPopup_Show("EXQUISILOOT_DELETE_LOOT", lootName, format("%s - %s", timestamp, raidName))
+    if (popup) then
+        popup.raidID = raidID
+        popup.itemID = itemID
+    end
+end
+
+function ExquisilootDeleteAttendanceButton_OnClick()
+    local raidID = ExquisilootRaidScroll:GetSelection()
+    if not raidID then
+        StaticPopup_Show("EXQUISILOOT_ERROR", "A raid must be selected in order to delete an the attendance of a player")
+        return
+    end
+    if not ExquisilootAttendanceScroll:GetSelection() then
+        StaticPopup_Show("EXQUISILOOT_ERROR", "A player must be selected in order to delete their attendance")
+        return
+    end
+    local player = ExquisilootAttendanceScroll:GetRow(ExquisilootAttendanceScroll:GetSelection())[1]
+    local timestamp = Exquisiloot.db.profile.instances[raidID].datestamp
+    local name = Exquisiloot.db.profile.instances[raidID].name
+    local popup = StaticPopup_Show("EXQUISILOOT_DELETE_ATTENDANCE", player, format("%s - %s", timestamp, name))
+    if (popup) then
+        popup.raidID = raidID
+        popup.player = player
+    end
 end
 
 function Exquisiloot:showAddItem()
@@ -366,16 +486,6 @@ function ExquisilootModItemAddButton_OnModify()
 
     ExquisilootModItemFrame:Hide()
 end
-
---function ExquisilootPlayerDropdown()
---	local info = {}
-	--for player, _ in pairs(Exquisiloot:getRaidMembers()) do
-		--self:debug(player)
-	--	info.value = player
-	--	UIDropDownMenu_AddButton(info)
-	--end
-
---end
 
 function ExquisilootExport()
     local selected = ExquisilootRaidScroll:GetSelection()
