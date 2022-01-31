@@ -238,6 +238,11 @@ function Exquisiloot:addItem(raidID, name, texture, itemLink, player)
     })
 end
 
+function Exquisiloot:saveModItem(raidId, itemID, player)
+    self.db.profile.instances[raidId].loot[itemID]["player"] = player
+    self.db.profile.instances[raidId].loot[itemID].masterLootHold = false
+end
+
 function Exquisiloot:modItem(raidID, lootID, name, texture, itemLink, player)
 	-- pass
 end

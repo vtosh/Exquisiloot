@@ -287,7 +287,7 @@ function ExquisilootMainFrame_OnLoad()
     ExquisilootLootScroll:RegisterEvents({
         ["OnClick"] = function (rowFrame, cellFrame, data, cols, row, realrow, column, scrollingTable, ...)
             Exquisiloot:debug(Exquisiloot:dump(data[realrow]))
-            Exquisiloot:showModItem(ExquisilootRaidScroll:GetSelection(), data[realrow]["cols"][1]["value"])
+            ExquisilootModItemFrame_OnShow(ExquisilootRaidScroll:GetSelection(), data[realrow]["cols"][1]["value"])
         return false
         end,
     })
@@ -316,8 +316,8 @@ function Exquisiloot:showAddItem()
 	ExquisilootAddItemFrame:Show()
 end
 
-function Exquisiloot:showModItem(raidID, lootID)
-    loot = self.db.profile.instances[raidID].loot[lootID]
+function ExquisilootModItemFrame_OnShow(raidID, lootID)
+    loot = Exquisiloot.db.profile.instances[raidID].loot[lootID]
     -- Recycle old dropdown if it exists
     local dropdown = nil
     if _G["ExquisilootModItemPlayer"] then
@@ -352,21 +352,17 @@ function Exquisiloot:showModItem(raidID, lootID)
     end
 
     ExquisilootModItemItemName:SetText(loot["itemLink"])
-    ExquisilootModItemRaidID:SetText(raidID)
-    ExquisilootModItemItemID:SetText(itemID)
 
     ExquisilootModItemFrame:Show()
 end
 
-function Exquisiloot:saveModItem()
+function ExquisilootModItemAddButton_OnModify()
     local newPlayer = ExquisilootModItemPlayer.selectedValue
     local raid = ExquisilootRaidScroll:GetSelection()
     local item = ExquisilootLootScroll:GetSelection()
-    self.db.profile.instances[raid].loot[item]["player"] = newPlayer
+    Exquisiloot:saveModItem(raid, item, newPlayer)
     ExquisilootLootScroll.data[item]["cols"][4] = newPlayer
     ExquisilootLootScroll:ClearSelection()
-
-    --Exquisiloot:updateLootFrame(self.activeRaid)
 
     ExquisilootModItemFrame:Hide()
 end

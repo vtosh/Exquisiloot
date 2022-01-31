@@ -130,17 +130,6 @@
 					</OnClick>
 				</Scripts>
 			</Button>
-			<Button name="ExquisilootModifyLootButton" inherits="UIPanelButtonTemplate" text="Modify">
-				<Size x="75" y="23" />
-				<Anchors>
-					<Anchor point="BOTTOM" x="0" y="15" />
-				</Anchors>
-				<Scripts>
-					<OnClick>
-						Exquisiloot:showModItem(ExquisilootRaidScroll:GetSelection(), ExquisilootLootScroll:GetSelection())
-					</OnClick>
-				</Scripts>
-			</Button>
 			<Button name="ExquisilootDeleteRaidButton" inherits="UIPanelButtonTemplate" text="Delete">
 				<Size x="75" y="23" />
 				<Anchors>
@@ -320,18 +309,6 @@
 						<Anchor point="TOPLEFT" x="15" y="-75" />
 					</Anchors>
 				</FontString>
-				<FontString name="ExquisilootModItemRaidID" inherits="GameFontNormal" hidden="true" text="">
-					<Size x="80" y="20" />
-					<Anchors>
-						<Anchor point="TOPLEFT" />
-					</Anchors>
-				</FontString>
-				<FontString name="ExquisilootModItemItemID" inherits="GameFontNormal" hidden="true" text="">
-					<Size x="80" y="20" />
-					<Anchors>
-						<Anchor point="TOPLEFT" />
-					</Anchors>
-				</FontString>
 				<FontString name="ExquisilootModItemItemName" inherits="GameFontNormal" text="" nonspacewrap="true">
 					<Size x="80" y="20" />
 					<Anchors>
@@ -348,7 +325,7 @@
 				</Anchors>
 				<Scripts>
 					<OnClick>
-						Exquisiloot:saveModItem()
+						ExquisilootModItemAddButton_OnModify()
 					</OnClick>
 				</Scripts>
 			</Button>
