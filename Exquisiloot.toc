@@ -9,6 +9,7 @@ Libs\embeds.xml
 Locale\enGB.lua
 
 Exquisiloot.lua
+RaidTracking.lua
 comm.lua
 trustBubble.lua
 options.lua
