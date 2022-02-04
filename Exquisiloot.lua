@@ -27,7 +27,9 @@ local defaults = {
 		dungeon = false,
 		tooltipData = {},
         tooltipDataLastUpdated = C_DateAndTime.GetCalendarTimeFromEpoch(0),
-		trustedRank = 1
+		trustedRank = 1,
+        minimapbutton = {},
+        showMinimapButton = true
     }
 }
 
@@ -48,6 +50,9 @@ function Exquisiloot:OnInitialize()
 
     self:RegisterChatCommand("exl", "ChatCommand")
     self:RegisterChatCommand("exquisiloot", "ChatCommand")
+
+    -- Add the minimap icon
+    self.MinimapButton:_init()
 end
 
 function Exquisiloot:OnEnable()

@@ -7,3 +7,5 @@ L["Dungeon"] = true
 L["Toggles logging in Dungeons as well as Raids"] = true
 L["Trusted Rank"] = true
 L["Only sync from guild members with this rank or higher"] = true
+L["Enable Minimap Button"] = true
+L["Show the Exquisiloot minimap button"] = true

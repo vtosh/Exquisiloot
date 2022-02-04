@@ -16,3 +16,4 @@ options.lua
 Tooltips.lua
 trade.lua
 ui.xml
+Minimap.lua

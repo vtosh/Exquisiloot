@@ -39,7 +39,14 @@ local options = {
 			set = "setTrustedRank",
 			style = "dropdown",
 			values = getGuildRanks
-		}
+		},
+        showMinimapButton = {
+            type = "toggle",
+            name = L["Enable Minimap Button"],
+            desc = L["Show the Exquisiloot minimap button"],
+            get = "showMinimapButton",
+            set = "setMinimapButton",
+        }
     },
 }
 
@@ -72,4 +79,13 @@ end
 function Exquisiloot:setTrustedRank(info, value)
 	self.db.profile.trustedRank = value
     self.buildTrustBubble()
+end
+
+function Exquisiloot:showMinimapButton(info)
+    return self.db.profile.showMinimapButton
+end
+
+function Exquisiloot:setMinimapButton(info, value)
+    self.db.profile.showMinimapButton = value
+    Exquisiloot.MinimapButton:drawOrHide()
 end
