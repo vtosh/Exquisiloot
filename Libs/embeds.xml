@@ -14,7 +14,7 @@
     <Include file='Ace3\AceTimer-3.0\AceTimer-3.0.xml'/>
 
 	<Include file='ScrollingTable-4.1.3\lib-st.xml'/>
-	<Script file='LibDataBroker-1-1\LibDataBroker-1.1.lua'/>
+	<Script file='LibDataBroker-1.1\LibDataBroker-1.1.lua'/>
   <Include file="LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0\lib.xml"/>
 	<Include file='LibCompress\lib.xml'/>
 </Ui>
